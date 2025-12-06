@@ -3,6 +3,7 @@ import 'package:bydgoszcz/di/injector.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
 import 'package:bydgoszcz/presentation/pages/home/home_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -15,23 +16,9 @@ class AppRouter {
   AppCubit get appCubit => _appCubit;
 
   late final GoRouter router = GoRouter(
-    initialLocation: '/',
-    redirect: (context, state) {
-      final hasCompletedOnboarding = _appCubit.state.hasCompletedOnboarding;
-
-      final isOnboarding = state.matchedLocation == '/onboarding';
-
-      if (!hasCompletedOnboarding && !isOnboarding) {
-        return '/onboarding';
-      }
-
-      if (hasCompletedOnboarding && isOnboarding) {
-        return '/';
-      }
-
-      return null;
-    },
+    initialLocation: '/start',
     routes: [
+      GoRoute(path: '/start', builder: (context, state) => const StartPage()),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingPage(),

@@ -1,4 +1,5 @@
 import 'package:bydgoszcz/core/constants/app_constants.dart';
+import 'package:bydgoszcz/core/theme/app_theme.dart';
 import 'package:bydgoszcz/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,10 +27,7 @@ class _BydgoszczAppState extends State<BydgoszczApp> {
       child: MaterialApp.router(
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme(),
         routerConfig: _appRouter.router,
       ),
     );
