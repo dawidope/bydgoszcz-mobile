@@ -11,6 +11,7 @@ class Monument with _$Monument {
     required String shortDescription,
     required String facts,
     required String imageUrl,
+    required String googleMapsUrl,
     String? story,
     String? funFact,
   }) = _Monument;

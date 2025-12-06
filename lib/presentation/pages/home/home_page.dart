@@ -4,6 +4,7 @@ import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
 import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -87,7 +88,7 @@ class HomePage extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () {
-                            // TODO: Navigate to monuments
+                            context.push('/monuments');
                           },
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
