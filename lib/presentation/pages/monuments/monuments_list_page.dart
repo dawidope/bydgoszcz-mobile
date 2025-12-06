@@ -11,9 +11,7 @@ class MonumentsListPage extends StatelessWidget {
     final monuments = repository.getAllMonuments();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Wybierz zabytek'),
-      ),
+      appBar: AppBar(title: const Text('Wybierz zabytek')),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: monuments.length,
@@ -51,12 +49,8 @@ class MonumentsListPage extends StatelessWidget {
                         children: [
                           Text(
                             monument.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),

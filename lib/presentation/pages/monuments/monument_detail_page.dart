@@ -5,10 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class MonumentDetailPage extends StatelessWidget {
   final String monumentId;
 
-  const MonumentDetailPage({
-    super.key,
-    required this.monumentId,
-  });
+  const MonumentDetailPage({super.key, required this.monumentId});
 
   Future<void> _openGoogleMaps(String url) async {
     final uri = Uri.parse(url);
@@ -25,16 +22,12 @@ class MonumentDetailPage extends StatelessWidget {
     if (monument == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Błąd')),
-        body: const Center(
-          child: Text('Nie znaleziono zabytku'),
-        ),
+        body: const Center(child: Text('Nie znaleziono zabytku')),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(monument.name),
-      ),
+      appBar: AppBar(title: Text(monument.name)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,16 +55,16 @@ class MonumentDetailPage extends StatelessWidget {
                   Text(
                     monument.name,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   // Krótki opis
                   Text(
                     monument.shortDescription,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey[700],
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: Colors.grey[700]),
                   ),
                   const SizedBox(height: 24),
                   // Pełny opis

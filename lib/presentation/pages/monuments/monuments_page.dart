@@ -40,10 +40,7 @@ class MonumentsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Zrób zdjęcie',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: const Text('Zrób zdjęcie', style: TextStyle(fontSize: 16)),
             ),
             const SizedBox(height: 16),
             OutlinedButton(
@@ -56,10 +53,7 @@ class MonumentsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Dodaj opis',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: const Text('Dodaj opis', style: TextStyle(fontSize: 16)),
             ),
           ],
         ),
