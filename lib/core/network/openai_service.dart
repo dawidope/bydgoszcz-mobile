@@ -334,6 +334,97 @@ If the name is not exact, try to match it to a known monument in Bydgoszcz.''';
     }
   }
 
+  /// Verifies if the photo shows the expected monument/location
+  Future<Map<String, dynamic>> verifyLocationPhoto({
+    required Uint8List imageBytes,
+    required String expectedMonumentName,
+    required String expectedMonumentFacts,
+  }) async {
+    try {
+      final base64Image = base64Encode(imageBytes);
+
+      final systemPrompt =
+          '''Jesteś ekspertem od rozpoznawania zabytków i miejsc w Bydgoszczy.
+Twoim zadaniem jest sprawdzenie, czy zdjęcie przedstawia oczekiwane miejsce.
+Bądź wyrozumiały - jeśli zdjęcie pokazuje jakąkolwiek część tego miejsca lub jego charakterystyczny element, uznaj to za poprawne.
+Odpowiadaj po polsku.''';
+
+      final userPrompt =
+          '''Sprawdź, czy to zdjęcie przedstawia: $expectedMonumentName
+
+Fakty o tym miejscu: $expectedMonumentFacts
+
+Czy na zdjęciu widać to miejsce (lub jego charakterystyczną część)?''';
+
+      final function = {
+        'name': 'verify_location',
+        'description': 'Weryfikuje czy zdjęcie przedstawia oczekiwane miejsce',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'isCorrectLocation': {
+              'type': 'boolean',
+              'description':
+                  'true jeśli zdjęcie przedstawia oczekiwane miejsce, false jeśli nie',
+            },
+            'confidence': {
+              'type': 'string',
+              'enum': ['high', 'medium', 'low'],
+              'description': 'Poziom pewności rozpoznania',
+            },
+            'explanation': {
+              'type': 'string',
+              'description':
+                  'Krótkie wyjaśnienie po polsku dla dziecka (1-2 zdania)',
+            },
+          },
+          'required': ['isCorrectLocation', 'confidence', 'explanation'],
+        },
+      };
+
+      final requestBody = {
+        'model': 'gpt-4.1',
+        'messages': [
+          {'role': 'system', 'content': systemPrompt},
+          {
+            'role': 'user',
+            'content': [
+              {'type': 'text', 'text': userPrompt},
+              {
+                'type': 'image_url',
+                'image_url': {
+                  'url': 'data:image/jpeg;base64,$base64Image',
+                  'detail': 'low',
+                },
+              },
+            ],
+          },
+        ],
+        'functions': [function],
+        'function_call': {'name': 'verify_location'},
+        'temperature': 0.3,
+      };
+
+      final response = await _dio.post(
+        OpenAiConstants.chatCompletions,
+        data: requestBody,
+      );
+
+      final message = response.data['choices'][0]['message'];
+
+      if (message['function_call'] != null) {
+        final functionArgs = message['function_call']['arguments'];
+        return json.decode(functionArgs);
+      }
+
+      throw Exception('No function call in response');
+    } on DioException catch (e) {
+      throw Exception('OpenAI Vision API error: ${e.message}');
+    } catch (e) {
+      throw Exception('Error verifying location: $e');
+    }
+  }
+
   /// Generates an adventure route with stories and quizzes for children
   Future<Map<String, dynamic>> generateAdventureRoute({
     required List<Map<String, String>> monuments,

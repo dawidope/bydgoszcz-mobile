@@ -4,7 +4,9 @@ import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/data/local/app_storage.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/di/injector.dart';
+import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/monument.dart';
+import 'package:bydgoszcz/models/route_stop.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
 import 'package:bydgoszcz/presentation/bloc/monument_description_cubit.dart';
 import 'package:bydgoszcz/presentation/bloc/monument_recognition_cubit.dart';
@@ -16,10 +18,13 @@ import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/confirm_presence_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/my_adventures_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_adventure_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_stop_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/stop_quiz_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/verify_photo_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -119,6 +124,40 @@ class AppRouter {
           final routeId = state.pathParameters['routeId']!;
           final stopId = state.pathParameters['stopId']!;
           return RouteStopPage(routeId: routeId, stopId: stopId);
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/stop/:stopId/confirm',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final route = extra['route'] as GeneratedRoute;
+          final stop = extra['stop'] as RouteStop;
+          final monument = extra['monument'] as Monument;
+          return ConfirmPresencePage(
+            route: route,
+            stop: stop,
+            monument: monument,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/stop/:stopId/verify-photo',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final route = extra['route'] as GeneratedRoute;
+          final stop = extra['stop'] as RouteStop;
+          final monument = extra['monument'] as Monument;
+          return VerifyPhotoPage(route: route, stop: stop, monument: monument);
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/stop/:stopId/quiz',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final route = extra['route'] as GeneratedRoute;
+          final stop = extra['stop'] as RouteStop;
+          final monument = extra['monument'] as Monument;
+          return StopQuizPage(route: route, stop: stop, monument: monument);
         },
       ),
     ],

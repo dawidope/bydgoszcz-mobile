@@ -382,11 +382,14 @@ class _RouteStopContent extends StatelessWidget {
               ? Icons.check_circle_rounded
               : Icons.location_on_rounded,
           label: stop.visited ? 'Odwiedzone ✓' : 'Potwierdź obecność',
-          color: stop.visited ? AppColors.success : AppColors.primary,
+          color: AppColors.success,
           onTap: stop.visited
               ? null
               : () {
-                  // TODO: Confirm presence
+                  context.push(
+                    '/route/${route.id}/stop/${stop.id}/confirm',
+                    extra: {'route': route, 'stop': stop, 'monument': monument},
+                  );
                 },
         ),
       ],
