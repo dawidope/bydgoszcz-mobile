@@ -181,7 +181,7 @@ class HomePage extends StatelessWidget {
           icon: Icons.emoji_events_rounded,
           accentColor: AppColors.accent,
           onTap: () {
-            // TODO: Navigate to adventures
+            context.push('/route/adventures');
           },
         ),
       ],

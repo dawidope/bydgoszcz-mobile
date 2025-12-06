@@ -16,6 +16,7 @@ import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/my_adventures_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_adventure_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
@@ -99,6 +100,10 @@ class AppRouter {
             imageBytes: imageBytes,
           );
         },
+      ),
+      GoRoute(
+        path: '/route/adventures',
+        builder: (context, state) => const MyAdventuresPage(),
       ),
       GoRoute(
         path: '/route/adventure/:id',
