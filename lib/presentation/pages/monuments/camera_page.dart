@@ -60,8 +60,6 @@ class _CameraPageState extends State<CameraPage> {
     return BlocListener<MonumentRecognitionCubit, MonumentRecognitionState>(
       listener: (context, state) {
         if (state is MonumentRecognitionSuccess) {
-          // Nawiguj do szczegółów zabytku, przekazując obiekt Monument
-          // Używamy push zamiast go, żeby pop() działał
           context.push(
             '/monuments/detail/${state.monument.id}',
             extra: state.monument,

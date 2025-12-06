@@ -4,9 +4,11 @@ import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/di/injector.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
+import 'package:bydgoszcz/presentation/bloc/monument_description_cubit.dart';
 import 'package:bydgoszcz/presentation/bloc/monument_recognition_cubit.dart';
 import 'package:bydgoszcz/presentation/pages/home/home_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/camera_page.dart';
+import 'package:bydgoszcz/presentation/pages/monuments/description_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
@@ -46,9 +48,18 @@ class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (context) => MonumentRecognitionCubit(
             openAiService: getIt.get<OpenAiService>(),
-            monumentsRepository: getIt.get<MonumentsRepository>(),
           ),
           child: const CameraPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/monuments/description',
+        builder: (context, state) => BlocProvider(
+          create: (context) => MonumentDescriptionCubit(
+            openAiService: getIt.get<OpenAiService>(),
+            monumentsRepository: getIt.get<MonumentsRepository>(),
+          ),
+          child: const DescriptionPage(),
         ),
       ),
       GoRoute(

@@ -133,12 +133,12 @@ class MonumentsPage extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ActionCard.light(
-          title: 'Dodaj opis',
-          subtitle: 'Opisz miejsce, które widzisz',
+          title: 'Wpisz nazwę',
+          subtitle: 'Wyszukaj miejsce po nazwie',
           icon: Icons.edit_note_rounded,
           accentColor: AppColors.bydgoszczYellow,
           onTap: () {
-            // TODO: Navigate to manual description
+            context.push('/monuments/description');
           },
         ),
       ],

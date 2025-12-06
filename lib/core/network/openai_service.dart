@@ -178,7 +178,7 @@ Provide detailed information about the monument in Polish language.''';
             'googleMapsUrl': {
               'type': 'string',
               'description':
-                  'Google Maps search url in format: https://www.google.com/maps/place/NUMBER+STREET+CITY+STATE',
+                  'Google Maps search url in format: https://www.google.com/maps/search/NUMBER+STREET+CITY+STATE',
             },
             'confidence': {
               'type': 'string',
@@ -237,6 +237,100 @@ Provide detailed information about the monument in Polish language.''';
       throw Exception('OpenAI Vision API error: ${e.message}');
     } catch (e) {
       throw Exception('Error recognizing monument: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getMonumentDetailsByName({
+    required String monumentName,
+  }) async {
+    try {
+      final systemPrompt =
+          '''You are an expert on Bydgoszcz monuments and landmarks in Poland.
+The user will provide a name or location of a monument/landmark in Bydgoszcz.
+Provide detailed information about this monument in Polish language.
+If the name is not exact, try to match it to a known monument in Bydgoszcz.''';
+
+      final userPrompt =
+          'Podaj szczegółowe informacje o tym miejscu w Bydgoszczy: $monumentName';
+
+      final function = {
+        'name': 'get_monument_details',
+        'description':
+            'Provides detailed structured information about a monument in Bydgoszcz',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'name': {
+              'type': 'string',
+              'description': 'The exact name of the monument in Polish',
+            },
+            'shortDescription': {
+              'type': 'string',
+              'description':
+                  'A brief 1-2 sentence description of the monument in Polish',
+            },
+            'facts': {
+              'type': 'string',
+              'description':
+                  'Interesting historical facts about this monument in Polish (3-5 sentences)',
+            },
+            'imageUrl': {
+              'type': 'string',
+              'description':
+                  'Find any image of this place in the internet and provide its URL. Try to find official or high-quality images.',
+            },
+            'googleMapsUrl': {
+              'type': 'string',
+              'description':
+                  'Google Maps search url in format: https://www.google.com/maps/search/NUMBER+STREET+CITY+STATE',
+            },
+            'confidence': {
+              'type': 'string',
+              'enum': ['high', 'medium', 'low'],
+              'description': 'Confidence level of identification',
+            },
+          },
+          'required': [
+            'name',
+            'shortDescription',
+            'facts',
+            'imageUrl',
+            'googleMapsUrl',
+            'confidence',
+          ],
+        },
+      };
+
+      final requestBody = {
+        'model': 'gpt-4.1',
+        'messages': [
+          {'role': 'system', 'content': systemPrompt},
+          {'role': 'user', 'content': userPrompt},
+        ],
+        'functions': [function],
+        'function_call': {'name': 'get_monument_details'},
+        'temperature': 0.3,
+        'max_tokens': 800,
+      };
+
+      final response = await _dio.post(
+        OpenAiConstants.chatCompletions,
+        data: requestBody,
+      );
+
+      final message = response.data['choices'][0]['message'];
+
+      if (message['function_call'] != null) {
+        final functionArgs = message['function_call']['arguments'];
+        final j = json.decode(functionArgs);
+        return j;
+      }
+
+      throw Exception('No function call in response');
+    } on DioException catch (e) {
+      throw Exception('OpenAI API error: ${e.message}');
+    } catch (e) {
+      throw Exception('Error getting monument details: $e');
     }
   }
 }

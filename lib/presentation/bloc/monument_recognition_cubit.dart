@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
-import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,14 +26,10 @@ class MonumentRecognitionError extends MonumentRecognitionState {
 // Cubit
 class MonumentRecognitionCubit extends Cubit<MonumentRecognitionState> {
   final OpenAiService _openAiService;
-  final MonumentsRepository _monumentsRepository;
 
-  MonumentRecognitionCubit({
-    required OpenAiService openAiService,
-    required MonumentsRepository monumentsRepository,
-  }) : _openAiService = openAiService,
-       _monumentsRepository = monumentsRepository,
-       super(MonumentRecognitionInitial());
+  MonumentRecognitionCubit({required OpenAiService openAiService})
+    : _openAiService = openAiService,
+      super(MonumentRecognitionInitial());
 
   Future<void> recognizeMonument(String imagePath) async {
     emit(MonumentRecognitionLoading());
