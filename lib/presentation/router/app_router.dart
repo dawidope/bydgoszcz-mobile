@@ -19,6 +19,7 @@ import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/my_adventures_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_adventure_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/route_stop_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -110,6 +111,14 @@ class AppRouter {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return RouteAdventurePage(routeId: id);
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/stop/:stopId',
+        builder: (context, state) {
+          final routeId = state.pathParameters['routeId']!;
+          final stopId = state.pathParameters['stopId']!;
+          return RouteStopPage(routeId: routeId, stopId: stopId);
         },
       ),
     ],

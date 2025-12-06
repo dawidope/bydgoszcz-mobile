@@ -170,7 +170,7 @@ class RouteAdventurePage extends StatelessWidget {
                       stop: stop,
                       imageUrl: monument.imageUrl,
                       onTap: () {
-                        // TODO: Navigate to stop details
+                        context.push('/route/${route.id}/stop/${stop.id}');
                       },
                     ),
                   );

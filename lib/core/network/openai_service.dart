@@ -343,7 +343,10 @@ If the name is not exact, try to match it to a known monument in Bydgoszcz.''';
   }) async {
     try {
       final monumentsList = monuments
-          .map((m) => '- ${m['name']}: ${m['facts']}')
+          .map(
+            (m) =>
+                '- ID: ${m['id']}, Nazwa: ${m['name']}, Fakty: ${m['facts']}',
+          )
           .join('\n');
 
       final systemPrompt =
@@ -365,6 +368,7 @@ Wymagania:
 4. Dla każdego miejsca stwórz quiz z 4 odpowiedziami (1 poprawna, 3 błędne)
 5. Dodaj ciekawostkę dla każdego miejsca
 
+WAŻNE: Użyj dokładnie tych samych ID zabytków, które są podane w liście powyżej (monumentId).
 Pamiętaj: to ma być spójna bajka gdzie $userName jest głównym bohaterem!''';
 
       final function = {
@@ -393,7 +397,8 @@ Pamiętaj: to ma być spójna bajka gdzie $userName jest głównym bohaterem!'''
                 'properties': {
                   'monumentId': {
                     'type': 'string',
-                    'description': 'ID zabytku z listy wejściowej',
+                    'description':
+                        'DOKŁADNIE to samo ID zabytku jak w liście wejściowej (np. opera, ratusz, most_kolejowy)',
                   },
                   'name': {'type': 'string', 'description': 'Nazwa miejsca'},
                   'order': {
