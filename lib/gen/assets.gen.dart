@@ -11,6 +11,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsAudioGen {
+  const $AssetsAudioGen();
+
+  /// File path: assets/audio/dashboard.mp3
+  String get dashboard => 'assets/audio/dashboard.mp3';
+
+  /// List of all assets
+  List<String> get values => [dashboard];
+}
+
 class $AssetsFontsGen {
   const $AssetsFontsGen();
 
@@ -42,17 +52,22 @@ class $AssetsFontsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/dashboard.png
+  AssetGenImage get dashboard =>
+      const AssetGenImage('assets/images/dashboard.png');
+
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [logo];
+  List<AssetGenImage> get values => [dashboard, logo];
 }
 
 class Assets {
   const Assets._();
 
   static const String aEnv = '.env';
+  static const $AssetsAudioGen audio = $AssetsAudioGen();
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 

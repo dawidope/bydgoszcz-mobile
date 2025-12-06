@@ -120,6 +120,7 @@ class AppTheme {
 
       // AppBar Theme
       appBarTheme: const AppBarTheme(
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -162,7 +163,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: 12,
+          vertical: 16,
         ),
       ),
 
