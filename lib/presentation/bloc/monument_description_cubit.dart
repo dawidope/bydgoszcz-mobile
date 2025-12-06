@@ -1,5 +1,4 @@
 import 'package:bydgoszcz/core/network/openai_service.dart';
-import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,13 +22,10 @@ class MonumentDescriptionError extends MonumentDescriptionState {
 // Cubit
 class MonumentDescriptionCubit extends Cubit<MonumentDescriptionState> {
   final OpenAiService _openAiService;
-  final MonumentsRepository _monumentsRepository;
 
   MonumentDescriptionCubit({
     required OpenAiService openAiService,
-    required MonumentsRepository monumentsRepository,
   }) : _openAiService = openAiService,
-       _monumentsRepository = monumentsRepository,
        super(MonumentDescriptionInitial());
 
   Future<void> getMonumentDetails(String monumentName) async {

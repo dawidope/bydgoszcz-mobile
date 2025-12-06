@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 // States
 abstract class MonumentRecognitionState {}
@@ -14,8 +15,8 @@ class MonumentRecognitionLoading extends MonumentRecognitionState {}
 
 class MonumentRecognitionSuccess extends MonumentRecognitionState {
   final Monument monument;
-  final String imagePath;
-  MonumentRecognitionSuccess(this.monument, this.imagePath);
+  final Uint8List imageBytes;
+  MonumentRecognitionSuccess(this.monument, this.imageBytes);
 }
 
 class MonumentRecognitionError extends MonumentRecognitionState {
@@ -31,11 +32,11 @@ class MonumentRecognitionCubit extends Cubit<MonumentRecognitionState> {
     : _openAiService = openAiService,
       super(MonumentRecognitionInitial());
 
-  Future<void> recognizeMonument(String imagePath) async {
+  Future<void> recognizeMonument(XFile imageFile) async {
     emit(MonumentRecognitionLoading());
 
     try {
-      final imageBytes = await File(imagePath).readAsBytes();
+      final imageBytes = await imageFile.readAsBytes();
       final base64Image = base64Encode(imageBytes);
 
       final recognitionResult = await _openAiService.recognizeMonument(
@@ -54,10 +55,10 @@ class MonumentRecognitionCubit extends Cubit<MonumentRecognitionState> {
 
       final resultMonument = Monument.fromRecognition(
         recognitionResult,
-        imagePath,
+        'memory', // Placeholder since we use bytes now
       );
 
-      emit(MonumentRecognitionSuccess(resultMonument, imagePath));
+      emit(MonumentRecognitionSuccess(resultMonument, imageBytes));
     } catch (e) {
       emit(
         MonumentRecognitionError(

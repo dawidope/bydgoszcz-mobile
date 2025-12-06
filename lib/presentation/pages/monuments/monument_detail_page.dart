@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
@@ -16,8 +17,14 @@ import 'package:url_launcher/url_launcher.dart';
 class MonumentDetailPage extends StatelessWidget {
   final String? monumentId;
   final Monument? monument;
+  final Uint8List? imageBytes;
 
-  const MonumentDetailPage({super.key, this.monumentId, this.monument})
+  const MonumentDetailPage({
+    super.key,
+    this.monumentId,
+    this.monument,
+    this.imageBytes,
+  })
     : assert(
         monumentId != null || monument != null,
         'Either monumentId or monument must be provided',
@@ -298,6 +305,23 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
   }
 
   Widget _buildImage(String imageUrl) {
+    // If we have imageBytes from camera, use them directly
+    if (imageBytes != null) {
+      return Image.memory(
+        imageBytes!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/logo.png'),
+              fit: BoxFit.contain,
+            ),
+            color: AppColors.surfaceVariant,
+          ),
+        ),
+      );
+    }
+
     final isFilePath =
         imageUrl.startsWith('/') ||
         imageUrl.contains('\\') ||
@@ -317,7 +341,7 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
     );
 
     if (isFilePath) {
-      // It's a file from camera
+      // It's a file from camera - shouldn't happen with web support
       return Image.file(
         File(imageUrl),
         fit: BoxFit.cover,

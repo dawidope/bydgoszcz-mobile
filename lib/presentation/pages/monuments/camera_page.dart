@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
@@ -50,7 +50,7 @@ class _CameraPageState extends State<CameraPage> {
   void _recognizeMonument() {
     if (_selectedImage != null) {
       context.read<MonumentRecognitionCubit>().recognizeMonument(
-        _selectedImage!.path,
+        _selectedImage!,
       );
     }
   }
@@ -62,7 +62,10 @@ class _CameraPageState extends State<CameraPage> {
         if (state is MonumentRecognitionSuccess) {
           context.push(
             '/monuments/detail/${state.monument.id}',
-            extra: state.monument,
+            extra: {
+              'monument': state.monument,
+              'imageBytes': state.imageBytes,
+            },
           );
         } else if (state is MonumentRecognitionError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -257,7 +260,17 @@ class _CameraPageState extends State<CameraPage> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.file(File(_selectedImage!.path), fit: BoxFit.cover),
+          FutureBuilder<Uint8List>(
+            future: _selectedImage!.readAsBytes(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Image.memory(snapshot.data!, fit: BoxFit.cover);
+              }
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            },
+          ),
           // Gradient overlay
           Container(
             decoration: BoxDecoration(

@@ -1,6 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/data/local/app_storage.dart';
-import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/di/injector.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
@@ -57,7 +58,6 @@ class AppRouter {
         builder: (context, state) => BlocProvider(
           create: (context) => MonumentDescriptionCubit(
             openAiService: getIt.get<OpenAiService>(),
-            monumentsRepository: getIt.get<MonumentsRepository>(),
           ),
           child: const DescriptionPage(),
         ),
@@ -66,11 +66,23 @@ class AppRouter {
         path: '/monuments/detail/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          // Check if Monument object was passed via extra
-          final monument = state.extra as Monument?;
+          // Check if data was passed via extra
+          final extra = state.extra;
+          Monument? monument;
+          Uint8List? imageBytes;
+
+          if (extra is Map<String, dynamic>) {
+            monument = extra['monument'] as Monument?;
+            imageBytes = extra['imageBytes'] as Uint8List?;
+          } else if (extra is Monument) {
+            // Backward compatibility
+            monument = extra;
+          }
+
           return MonumentDetailPage(
             monumentId: monument == null ? id : null,
             monument: monument,
+            imageBytes: imageBytes,
           );
         },
       ),
