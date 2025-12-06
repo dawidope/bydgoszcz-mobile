@@ -1,3 +1,4 @@
+import 'package:bydgoszcz/models/quiz_question.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'route_stop.freezed.dart';
@@ -11,7 +12,9 @@ class RouteStop with _$RouteStop {
     required int order,
     required String shortStory,
     required String funFact,
+    required QuizQuestion quiz,
     @Default(false) bool visited,
+    @Default(false) bool quizCompleted,
     String? userPhotoPath,
   }) = _RouteStop;
 

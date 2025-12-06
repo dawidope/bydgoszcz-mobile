@@ -1,10 +1,15 @@
+import 'dart:ui';
+
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
+import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
+import 'package:bydgoszcz/presentation/bloc/route_planning_cubit.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class RoutePlanningPage extends StatefulWidget {
@@ -14,12 +19,33 @@ class RoutePlanningPage extends StatefulWidget {
   State<RoutePlanningPage> createState() => _RoutePlanningPageState();
 }
 
-class _RoutePlanningPageState extends State<RoutePlanningPage> {
+class _RoutePlanningPageState extends State<RoutePlanningPage>
+    with SingleTickerProviderStateMixin {
   final MonumentsRepository _repository = MonumentsRepository();
   final Set<String> _selectedMonumentIds = {};
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   bool get _isSelectionValid =>
       _selectedMonumentIds.length >= 2 && _selectedMonumentIds.length <= 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   void _toggleMonumentSelection(String monumentId) {
     setState(() {
@@ -41,9 +67,15 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
     });
   }
 
-  void _continueToNextStep() {
+  void _generateRoute() {
     if (_isSelectionValid) {
-      //Navigate to next
+      final userProfile = context.read<AppCubit>().state.userProfile;
+      if (userProfile != null) {
+        context.read<RoutePlanningCubit>().generateRoute(
+          selectedMonumentIds: _selectedMonumentIds.toList(),
+          userProfile: userProfile,
+        );
+      }
     }
   }
 
@@ -51,8 +83,41 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
   Widget build(BuildContext context) {
     final monuments = _repository.getAllMonuments();
 
+    return BlocConsumer<RoutePlanningCubit, RoutePlanningState>(
+      listener: (context, state) {
+        if (state is RoutePlanningSuccess) {
+          // TODO: Navigate to route details page
+          context.go('/route/adventure/${state.route.id}');
+        } else if (state is RoutePlanningError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: Stack(
+            children: [
+              // Main content
+              _buildMainContent(monuments),
+
+              // Loading overlay with blur
+              if (state is RoutePlanningGenerating)
+                _buildLoadingOverlay(state.statusMessage),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMainContent(List<Monument> monuments) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -100,14 +165,10 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
                 itemBuilder: (context, index) {
                   final monument = monuments[index];
                   final isSelected = _selectedMonumentIds.contains(monument.id);
-                  final selectionOrder = isSelected
-                      ? _selectedMonumentIds.toList().indexOf(monument.id) + 1
-                      : null;
 
                   return _MonumentSelectCard(
                     monument: monument,
                     isSelected: isSelected,
-                    selectionOrder: selectionOrder,
                     onTap: () => _toggleMonumentSelection(monument.id),
                   );
                 },
@@ -119,6 +180,136 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingOverlay(String message) {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: Container(
+        color: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.3),
+                  blurRadius: 30,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Animated icon
+                ScaleTransition(
+                  scale: _pulseAnimation,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary, AppColors.bydgoszczBlue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.4),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.auto_stories_rounded,
+                      size: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Magic sparkles animation
+                _buildMagicSparkles(),
+
+                const SizedBox(height: 24),
+
+                // Status message
+                Text(
+                  message,
+                  style: AppTypography.titleMedium.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'To może chwilę potrwać...',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Progress indicator
+                SizedBox(
+                  width: 200,
+                  child: LinearProgressIndicator(
+                    backgroundColor: AppColors.surfaceVariant,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMagicSparkles() {
+    return SizedBox(
+      height: 30,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(5, (index) {
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: Duration(milliseconds: 600 + (index * 200)),
+            builder: (context, value, child) {
+              return Opacity(
+                opacity: (value * 2 > 1) ? (2 - value * 2) : value * 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Icon(
+                    Icons.star_rounded,
+                    size: 16 + (index % 2) * 8,
+                    color: [
+                      AppColors.bydgoszczYellow,
+                      AppColors.primary,
+                      AppColors.bydgoszczBlue,
+                      AppColors.accent,
+                      AppColors.bydgoszczYellow,
+                    ][index],
+                  ),
+                ),
+              );
+            },
+          );
+        }),
       ),
     );
   }
@@ -222,10 +413,10 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
   Widget _buildActionButton() {
     return PrimaryButton(
       label: _isSelectionValid
-          ? 'Dalej (${_selectedMonumentIds.length} zabytków)'
+          ? 'Stwórz przygodę ✨'
           : 'Wybierz zabytki (min. 2)',
-      onPressed: _isSelectionValid ? _continueToNextStep : null,
-      icon: Icons.arrow_forward_rounded,
+      onPressed: _isSelectionValid ? _generateRoute : null,
+      icon: Icons.auto_awesome_rounded,
     );
   }
 }
@@ -233,13 +424,11 @@ class _RoutePlanningPageState extends State<RoutePlanningPage> {
 class _MonumentSelectCard extends StatelessWidget {
   final Monument monument;
   final bool isSelected;
-  final int? selectionOrder;
   final VoidCallback onTap;
 
   const _MonumentSelectCard({
     required this.monument,
     required this.isSelected,
-    required this.selectionOrder,
     required this.onTap,
   });
 
@@ -275,46 +464,21 @@ class _MonumentSelectCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Stack(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: AssetImage(monument.imageUrl),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              // Monument Image
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: AssetImage(monument.imageUrl),
+                    fit: BoxFit.cover,
                   ),
-                  if (isSelected && selectionOrder != null)
-                    Positioned(
-                      top: -4,
-                      left: -4,
-                      child: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                          boxShadow: AppShadows.soft,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$selectionOrder',
-                            style: AppTypography.labelSmall.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+                ),
               ),
               const SizedBox(width: 12),
+
+              // Monument Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,6 +507,8 @@ class _MonumentSelectCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
+
+              // Selection Indicator
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 width: 32,

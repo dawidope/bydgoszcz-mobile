@@ -16,7 +16,15 @@ _$RouteStopImpl _$$RouteStopImplFromJson(Map json) => $checkedCreate(
       order: $checkedConvert('order', (v) => (v as num).toInt()),
       shortStory: $checkedConvert('short_story', (v) => v as String),
       funFact: $checkedConvert('fun_fact', (v) => v as String),
+      quiz: $checkedConvert(
+        'quiz',
+        (v) => QuizQuestion.fromJson(Map<String, dynamic>.from(v as Map)),
+      ),
       visited: $checkedConvert('visited', (v) => v as bool? ?? false),
+      quizCompleted: $checkedConvert(
+        'quiz_completed',
+        (v) => v as bool? ?? false,
+      ),
       userPhotoPath: $checkedConvert('user_photo_path', (v) => v as String?),
     );
     return val;
@@ -24,6 +32,7 @@ _$RouteStopImpl _$$RouteStopImplFromJson(Map json) => $checkedCreate(
   fieldKeyMap: const {
     'shortStory': 'short_story',
     'funFact': 'fun_fact',
+    'quizCompleted': 'quiz_completed',
     'userPhotoPath': 'user_photo_path',
   },
 );
@@ -35,6 +44,8 @@ Map<String, dynamic> _$$RouteStopImplToJson(_$RouteStopImpl instance) =>
       'order': instance.order,
       'short_story': instance.shortStory,
       'fun_fact': instance.funFact,
+      'quiz': instance.quiz,
       'visited': instance.visited,
+      'quiz_completed': instance.quizCompleted,
       'user_photo_path': instance.userPhotoPath,
     };

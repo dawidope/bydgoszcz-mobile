@@ -2,11 +2,13 @@ import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/data/local/app_storage.dart';
+import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/di/injector.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
 import 'package:bydgoszcz/presentation/bloc/monument_description_cubit.dart';
 import 'package:bydgoszcz/presentation/bloc/monument_recognition_cubit.dart';
+import 'package:bydgoszcz/presentation/bloc/route_planning_cubit.dart';
 import 'package:bydgoszcz/presentation/pages/home/home_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/camera_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/description_page.dart';
@@ -43,7 +45,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/route/planning',
-        builder: (context, state) => const RoutePlanningPage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => RoutePlanningCubit(
+            openAiService: getIt.get<OpenAiService>(),
+            monumentsRepository: getIt.get<MonumentsRepository>(),
+            appStorage: getIt.get<AppStorage>(),
+          ),
+          child: const RoutePlanningPage(),
+        ),
       ),
       GoRoute(
         path: '/monuments/list',

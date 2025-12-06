@@ -1,6 +1,7 @@
 import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/monument.dart';
+import 'package:bydgoszcz/models/quiz_question.dart';
 import 'package:bydgoszcz/models/route_stop.dart';
 import 'package:bydgoszcz/models/user_profile.dart';
 
@@ -78,6 +79,16 @@ Opowiedz 2-3 ciekawe fakty o Bydgoszczy dostosowane do zainteresowań dziecka.''
           order: index + 1,
           shortStory: monument.facts,
           funFact: 'Ciekawostka o ${monument.name}!',
+          quiz: QuizQuestion(
+            question: 'Co wiesz o ${monument.name}?',
+            answers: [
+              'Odpowiedź A',
+              'Odpowiedź B',
+              'Odpowiedź C',
+              'Odpowiedź D',
+            ],
+            correctAnswerIndex: 0,
+          ),
         );
       }).toList();
 
@@ -99,6 +110,16 @@ Opowiedz 2-3 ciekawe fakty o Bydgoszczy dostosowane do zainteresowań dziecka.''
           order: index + 1,
           shortStory: monument.facts,
           funFact: 'Ciekawostka o ${monument.name}!',
+          quiz: QuizQuestion(
+            question: 'Co wiesz o ${monument.name}?',
+            answers: [
+              'Odpowiedź A',
+              'Odpowiedź B',
+              'Odpowiedź C',
+              'Odpowiedź D',
+            ],
+            correctAnswerIndex: 0,
+          ),
         );
       }).toList();
 

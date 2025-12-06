@@ -26,7 +26,9 @@ mixin _$RouteStop {
   int get order => throw _privateConstructorUsedError;
   String get shortStory => throw _privateConstructorUsedError;
   String get funFact => throw _privateConstructorUsedError;
+  QuizQuestion get quiz => throw _privateConstructorUsedError;
   bool get visited => throw _privateConstructorUsedError;
+  bool get quizCompleted => throw _privateConstructorUsedError;
   String? get userPhotoPath => throw _privateConstructorUsedError;
 
   /// Serializes this RouteStop to a JSON map.
@@ -50,9 +52,13 @@ abstract class $RouteStopCopyWith<$Res> {
     int order,
     String shortStory,
     String funFact,
+    QuizQuestion quiz,
     bool visited,
+    bool quizCompleted,
     String? userPhotoPath,
   });
+
+  $QuizQuestionCopyWith<$Res> get quiz;
 }
 
 /// @nodoc
@@ -75,7 +81,9 @@ class _$RouteStopCopyWithImpl<$Res, $Val extends RouteStop>
     Object? order = null,
     Object? shortStory = null,
     Object? funFact = null,
+    Object? quiz = null,
     Object? visited = null,
+    Object? quizCompleted = null,
     Object? userPhotoPath = freezed,
   }) {
     return _then(
@@ -100,9 +108,17 @@ class _$RouteStopCopyWithImpl<$Res, $Val extends RouteStop>
                 ? _value.funFact
                 : funFact // ignore: cast_nullable_to_non_nullable
                       as String,
+            quiz: null == quiz
+                ? _value.quiz
+                : quiz // ignore: cast_nullable_to_non_nullable
+                      as QuizQuestion,
             visited: null == visited
                 ? _value.visited
                 : visited // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            quizCompleted: null == quizCompleted
+                ? _value.quizCompleted
+                : quizCompleted // ignore: cast_nullable_to_non_nullable
                       as bool,
             userPhotoPath: freezed == userPhotoPath
                 ? _value.userPhotoPath
@@ -111,6 +127,16 @@ class _$RouteStopCopyWithImpl<$Res, $Val extends RouteStop>
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of RouteStop
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $QuizQuestionCopyWith<$Res> get quiz {
+    return $QuizQuestionCopyWith<$Res>(_value.quiz, (value) {
+      return _then(_value.copyWith(quiz: value) as $Val);
+    });
   }
 }
 
@@ -129,9 +155,14 @@ abstract class _$$RouteStopImplCopyWith<$Res>
     int order,
     String shortStory,
     String funFact,
+    QuizQuestion quiz,
     bool visited,
+    bool quizCompleted,
     String? userPhotoPath,
   });
+
+  @override
+  $QuizQuestionCopyWith<$Res> get quiz;
 }
 
 /// @nodoc
@@ -153,7 +184,9 @@ class __$$RouteStopImplCopyWithImpl<$Res>
     Object? order = null,
     Object? shortStory = null,
     Object? funFact = null,
+    Object? quiz = null,
     Object? visited = null,
+    Object? quizCompleted = null,
     Object? userPhotoPath = freezed,
   }) {
     return _then(
@@ -178,9 +211,17 @@ class __$$RouteStopImplCopyWithImpl<$Res>
             ? _value.funFact
             : funFact // ignore: cast_nullable_to_non_nullable
                   as String,
+        quiz: null == quiz
+            ? _value.quiz
+            : quiz // ignore: cast_nullable_to_non_nullable
+                  as QuizQuestion,
         visited: null == visited
             ? _value.visited
             : visited // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        quizCompleted: null == quizCompleted
+            ? _value.quizCompleted
+            : quizCompleted // ignore: cast_nullable_to_non_nullable
                   as bool,
         userPhotoPath: freezed == userPhotoPath
             ? _value.userPhotoPath
@@ -200,7 +241,9 @@ class _$RouteStopImpl implements _RouteStop {
     required this.order,
     required this.shortStory,
     required this.funFact,
+    required this.quiz,
     this.visited = false,
+    this.quizCompleted = false,
     this.userPhotoPath,
   });
 
@@ -218,14 +261,19 @@ class _$RouteStopImpl implements _RouteStop {
   @override
   final String funFact;
   @override
+  final QuizQuestion quiz;
+  @override
   @JsonKey()
   final bool visited;
+  @override
+  @JsonKey()
+  final bool quizCompleted;
   @override
   final String? userPhotoPath;
 
   @override
   String toString() {
-    return 'RouteStop(id: $id, name: $name, order: $order, shortStory: $shortStory, funFact: $funFact, visited: $visited, userPhotoPath: $userPhotoPath)';
+    return 'RouteStop(id: $id, name: $name, order: $order, shortStory: $shortStory, funFact: $funFact, quiz: $quiz, visited: $visited, quizCompleted: $quizCompleted, userPhotoPath: $userPhotoPath)';
   }
 
   @override
@@ -239,7 +287,10 @@ class _$RouteStopImpl implements _RouteStop {
             (identical(other.shortStory, shortStory) ||
                 other.shortStory == shortStory) &&
             (identical(other.funFact, funFact) || other.funFact == funFact) &&
+            (identical(other.quiz, quiz) || other.quiz == quiz) &&
             (identical(other.visited, visited) || other.visited == visited) &&
+            (identical(other.quizCompleted, quizCompleted) ||
+                other.quizCompleted == quizCompleted) &&
             (identical(other.userPhotoPath, userPhotoPath) ||
                 other.userPhotoPath == userPhotoPath));
   }
@@ -253,7 +304,9 @@ class _$RouteStopImpl implements _RouteStop {
     order,
     shortStory,
     funFact,
+    quiz,
     visited,
+    quizCompleted,
     userPhotoPath,
   );
 
@@ -278,7 +331,9 @@ abstract class _RouteStop implements RouteStop {
     required final int order,
     required final String shortStory,
     required final String funFact,
+    required final QuizQuestion quiz,
     final bool visited,
+    final bool quizCompleted,
     final String? userPhotoPath,
   }) = _$RouteStopImpl;
 
@@ -296,7 +351,11 @@ abstract class _RouteStop implements RouteStop {
   @override
   String get funFact;
   @override
+  QuizQuestion get quiz;
+  @override
   bool get visited;
+  @override
+  bool get quizCompleted;
   @override
   String? get userPhotoPath;
 

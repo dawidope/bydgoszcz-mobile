@@ -333,4 +333,148 @@ If the name is not exact, try to match it to a known monument in Bydgoszcz.''';
       throw Exception('Error getting monument details: $e');
     }
   }
+
+  /// Generates an adventure route with stories and quizzes for children
+  Future<Map<String, dynamic>> generateAdventureRoute({
+    required List<Map<String, String>> monuments,
+    required String userName,
+    required int userAge,
+    required List<String> userInterests,
+  }) async {
+    try {
+      final monumentsList = monuments
+          .map((m) => '- ${m['name']}: ${m['facts']}')
+          .join('\n');
+
+      final systemPrompt =
+          '''Jesteś kreatywnym bajkopisarzem tworzącym magiczne przygody dla dzieci po Bydgoszczy.
+Tworzysz angażujące, edukacyjne historie z quizami dla młodych odkrywców.
+Głównym bohaterem jest $userName - odważny $userAge-letni odkrywca.
+Dostosuj styl i poziom trudności do wieku dziecka.
+Zainteresowania dziecka: ${userInterests.join(', ')}.''';
+
+      final userPrompt =
+          '''Stwórz magiczną przygodę po Bydgoszczy przez następujące miejsca:
+
+$monumentsList
+
+Wymagania:
+1. Stwórz wciągający wstęp bajki (150-200 słów) gdzie $userName wyrusza na przygodę
+2. Zaplanuj optymalną kolejność odwiedzania miejsc
+3. Dla każdego miejsca napisz fragment historii (100-150 słów) z wplecioną przygodą bohatera
+4. Dla każdego miejsca stwórz quiz z 4 odpowiedziami (1 poprawna, 3 błędne)
+5. Dodaj ciekawostkę dla każdego miejsca
+
+Pamiętaj: to ma być spójna bajka gdzie $userName jest głównym bohaterem!''';
+
+      final function = {
+        'name': 'create_adventure_route',
+        'description':
+            'Creates an adventure route with stories and quizzes for a child',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'title': {
+              'type': 'string',
+              'description':
+                  'Bajkowy tytuł przygody, np. "Magiczna wyprawa Tomka przez tajemnice Bydgoszczy"',
+            },
+            'introduction': {
+              'type': 'string',
+              'description':
+                  'Wstęp bajki (150-200 słów) - przedstawienie bohatera i rozpoczęcie przygody',
+            },
+            'stops': {
+              'type': 'array',
+              'description':
+                  'Lista miejsc do odwiedzenia w optymalnej kolejności',
+              'items': {
+                'type': 'object',
+                'properties': {
+                  'monumentId': {
+                    'type': 'string',
+                    'description': 'ID zabytku z listy wejściowej',
+                  },
+                  'name': {'type': 'string', 'description': 'Nazwa miejsca'},
+                  'order': {
+                    'type': 'integer',
+                    'description': 'Kolejność na trasie (1, 2, 3...)',
+                  },
+                  'story': {
+                    'type': 'string',
+                    'description':
+                        'Fragment bajki dla tego miejsca (100-150 słów) z przygodą bohatera',
+                  },
+                  'funFact': {
+                    'type': 'string',
+                    'description': 'Ciekawostka o tym miejscu dla dzieci',
+                  },
+                  'quiz': {
+                    'type': 'object',
+                    'description': 'Quiz o tym miejscu',
+                    'properties': {
+                      'question': {
+                        'type': 'string',
+                        'description':
+                            'Pytanie quizowe związane z tym miejscem',
+                      },
+                      'answers': {
+                        'type': 'array',
+                        'items': {'type': 'string'},
+                        'description': 'Lista 4 możliwych odpowiedzi',
+                      },
+                      'correctAnswerIndex': {
+                        'type': 'integer',
+                        'description': 'Indeks poprawnej odpowiedzi (0-3)',
+                      },
+                    },
+                    'required': ['question', 'answers', 'correctAnswerIndex'],
+                  },
+                },
+                'required': [
+                  'monumentId',
+                  'name',
+                  'order',
+                  'story',
+                  'funFact',
+                  'quiz',
+                ],
+              },
+            },
+          },
+          'required': ['title', 'introduction', 'stops'],
+        },
+      };
+
+      final requestBody = {
+        'model': 'gpt-4.1',
+        'messages': [
+          {'role': 'system', 'content': systemPrompt},
+          {'role': 'user', 'content': userPrompt},
+        ],
+        'functions': [function],
+        'function_call': {'name': 'create_adventure_route'},
+        'temperature': 0.8,
+        'max_tokens': 4000,
+      };
+
+      final response = await _dio.post(
+        OpenAiConstants.chatCompletions,
+        data: requestBody,
+      );
+
+      final message = response.data['choices'][0]['message'];
+
+      if (message['function_call'] != null) {
+        final functionArgs = message['function_call']['arguments'];
+        return json.decode(functionArgs);
+      }
+
+      throw Exception('No function call in response');
+    } on DioException catch (e) {
+      throw Exception('OpenAI API error: ${e.message}');
+    } catch (e) {
+      throw Exception('Error generating adventure route: $e');
+    }
+  }
 }
