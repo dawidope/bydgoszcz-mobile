@@ -1,4 +1,5 @@
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
+import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,20 +33,30 @@ class MonumentDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Obrazek na pełną szerokość
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  image: DecorationImage(
-                    image: AssetImage(monument.imageUrl),
-                    fit: BoxFit.cover,
-                    onError: (error, stackTrace) {},
+            // Audio player zamiast zwykłego obrazka
+            if (monument.audioUrl != null)
+              SizedBox(
+                height: 250,
+                child: AudioPlayerWidget(
+                  roundedCorners: false,
+                  audioAssetPath: monument.audioUrl!,
+                  imageAssetPath: monument.imageUrl,
+                ),
+              )
+            else
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    image: DecorationImage(
+                      image: AssetImage(monument.imageUrl),
+                      fit: BoxFit.cover,
+                      onError: (error, stackTrace) {},
+                    ),
                   ),
                 ),
               ),
-            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

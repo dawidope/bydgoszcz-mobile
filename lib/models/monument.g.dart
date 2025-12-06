@@ -20,6 +20,7 @@ _$MonumentImpl _$$MonumentImplFromJson(Map json) => $checkedCreate(
       facts: $checkedConvert('facts', (v) => v as String),
       imageUrl: $checkedConvert('image_url', (v) => v as String),
       googleMapsUrl: $checkedConvert('google_maps_url', (v) => v as String),
+      audioUrl: $checkedConvert('audio_url', (v) => v as String?),
       story: $checkedConvert('story', (v) => v as String?),
       funFact: $checkedConvert('fun_fact', (v) => v as String?),
     );
@@ -29,6 +30,7 @@ _$MonumentImpl _$$MonumentImplFromJson(Map json) => $checkedCreate(
     'shortDescription': 'short_description',
     'imageUrl': 'image_url',
     'googleMapsUrl': 'google_maps_url',
+    'audioUrl': 'audio_url',
     'funFact': 'fun_fact',
   },
 );
@@ -41,6 +43,7 @@ Map<String, dynamic> _$$MonumentImplToJson(_$MonumentImpl instance) =>
       'facts': instance.facts,
       'image_url': instance.imageUrl,
       'google_maps_url': instance.googleMapsUrl,
+      'audio_url': instance.audioUrl,
       'story': instance.story,
       'fun_fact': instance.funFact,
     };

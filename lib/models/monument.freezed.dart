@@ -27,6 +27,7 @@ mixin _$Monument {
   String get facts => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
   String get googleMapsUrl => throw _privateConstructorUsedError;
+  String? get audioUrl => throw _privateConstructorUsedError;
   String? get story => throw _privateConstructorUsedError;
   String? get funFact => throw _privateConstructorUsedError;
 
@@ -52,6 +53,7 @@ abstract class $MonumentCopyWith<$Res> {
     String facts,
     String imageUrl,
     String googleMapsUrl,
+    String? audioUrl,
     String? story,
     String? funFact,
   });
@@ -78,6 +80,7 @@ class _$MonumentCopyWithImpl<$Res, $Val extends Monument>
     Object? facts = null,
     Object? imageUrl = null,
     Object? googleMapsUrl = null,
+    Object? audioUrl = freezed,
     Object? story = freezed,
     Object? funFact = freezed,
   }) {
@@ -107,6 +110,10 @@ class _$MonumentCopyWithImpl<$Res, $Val extends Monument>
                 ? _value.googleMapsUrl
                 : googleMapsUrl // ignore: cast_nullable_to_non_nullable
                       as String,
+            audioUrl: freezed == audioUrl
+                ? _value.audioUrl
+                : audioUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
             story: freezed == story
                 ? _value.story
                 : story // ignore: cast_nullable_to_non_nullable
@@ -137,6 +144,7 @@ abstract class _$$MonumentImplCopyWith<$Res>
     String facts,
     String imageUrl,
     String googleMapsUrl,
+    String? audioUrl,
     String? story,
     String? funFact,
   });
@@ -162,6 +170,7 @@ class __$$MonumentImplCopyWithImpl<$Res>
     Object? facts = null,
     Object? imageUrl = null,
     Object? googleMapsUrl = null,
+    Object? audioUrl = freezed,
     Object? story = freezed,
     Object? funFact = freezed,
   }) {
@@ -191,6 +200,10 @@ class __$$MonumentImplCopyWithImpl<$Res>
             ? _value.googleMapsUrl
             : googleMapsUrl // ignore: cast_nullable_to_non_nullable
                   as String,
+        audioUrl: freezed == audioUrl
+            ? _value.audioUrl
+            : audioUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
         story: freezed == story
             ? _value.story
             : story // ignore: cast_nullable_to_non_nullable
@@ -214,6 +227,7 @@ class _$MonumentImpl implements _Monument {
     required this.facts,
     required this.imageUrl,
     required this.googleMapsUrl,
+    this.audioUrl,
     this.story,
     this.funFact,
   });
@@ -234,13 +248,15 @@ class _$MonumentImpl implements _Monument {
   @override
   final String googleMapsUrl;
   @override
+  final String? audioUrl;
+  @override
   final String? story;
   @override
   final String? funFact;
 
   @override
   String toString() {
-    return 'Monument(id: $id, name: $name, shortDescription: $shortDescription, facts: $facts, imageUrl: $imageUrl, googleMapsUrl: $googleMapsUrl, story: $story, funFact: $funFact)';
+    return 'Monument(id: $id, name: $name, shortDescription: $shortDescription, facts: $facts, imageUrl: $imageUrl, googleMapsUrl: $googleMapsUrl, audioUrl: $audioUrl, story: $story, funFact: $funFact)';
   }
 
   @override
@@ -257,6 +273,8 @@ class _$MonumentImpl implements _Monument {
                 other.imageUrl == imageUrl) &&
             (identical(other.googleMapsUrl, googleMapsUrl) ||
                 other.googleMapsUrl == googleMapsUrl) &&
+            (identical(other.audioUrl, audioUrl) ||
+                other.audioUrl == audioUrl) &&
             (identical(other.story, story) || other.story == story) &&
             (identical(other.funFact, funFact) || other.funFact == funFact));
   }
@@ -271,6 +289,7 @@ class _$MonumentImpl implements _Monument {
     facts,
     imageUrl,
     googleMapsUrl,
+    audioUrl,
     story,
     funFact,
   );
@@ -297,6 +316,7 @@ abstract class _Monument implements Monument {
     required final String facts,
     required final String imageUrl,
     required final String googleMapsUrl,
+    final String? audioUrl,
     final String? story,
     final String? funFact,
   }) = _$MonumentImpl;
@@ -316,6 +336,8 @@ abstract class _Monument implements Monument {
   String get imageUrl;
   @override
   String get googleMapsUrl;
+  @override
+  String? get audioUrl;
   @override
   String? get story;
   @override

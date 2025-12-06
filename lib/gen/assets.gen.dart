@@ -17,8 +17,63 @@ class $AssetsAudioGen {
   /// File path: assets/audio/dashboard.mp3
   String get dashboard => 'assets/audio/dashboard.mp3';
 
+  /// File path: assets/audio/fontanna_potop.mp3
+  String get fontannaPotop => 'assets/audio/fontanna_potop.mp3';
+
+  /// File path: assets/audio/kanal_bydgoski.mp3
+  String get kanalBydgoski => 'assets/audio/kanal_bydgoski.mp3';
+
+  /// File path: assets/audio/katedra_bydgoska.mp3
+  String get katedraBydgoska => 'assets/audio/katedra_bydgoska.mp3';
+
+  /// File path: assets/audio/luczniczka.mp3
+  String get luczniczka => 'assets/audio/luczniczka.mp3';
+
+  /// File path: assets/audio/mistrz_twardowski.mp3
+  String get mistrzTwardowski => 'assets/audio/mistrz_twardowski.mp3';
+
+  /// File path: assets/audio/mlyny_rothera.mp3
+  String get mlynyRothera => 'assets/audio/mlyny_rothera.mp3';
+
+  /// File path: assets/audio/muzeum_mydla.mp3
+  String get muzeumMydla => 'assets/audio/muzeum_mydla.mp3';
+
+  /// File path: assets/audio/muzeum_wojsk_ladowych.mp3
+  String get muzeumWojskLadowych => 'assets/audio/muzeum_wojsk_ladowych.mp3';
+
+  /// File path: assets/audio/myslecinek.mp3
+  String get myslecinek => 'assets/audio/myslecinek.mp3';
+
+  /// File path: assets/audio/przechodzacy_przez_rzeke.mp3
+  String get przechodzacyPrzezRzeke =>
+      'assets/audio/przechodzacy_przez_rzeke.mp3';
+
+  /// File path: assets/audio/stadion_zawiszy.mp3
+  String get stadionZawiszy => 'assets/audio/stadion_zawiszy.mp3';
+
+  /// File path: assets/audio/wieza_cisnien.mp3
+  String get wiezaCisnien => 'assets/audio/wieza_cisnien.mp3';
+
+  /// File path: assets/audio/wyspa_mlynska.mp3
+  String get wyspaMlynska => 'assets/audio/wyspa_mlynska.mp3';
+
   /// List of all assets
-  List<String> get values => [dashboard];
+  List<String> get values => [
+    dashboard,
+    fontannaPotop,
+    kanalBydgoski,
+    katedraBydgoska,
+    luczniczka,
+    mistrzTwardowski,
+    mlynyRothera,
+    muzeumMydla,
+    muzeumWojskLadowych,
+    myslecinek,
+    przechodzacyPrzezRzeke,
+    stadionZawiszy,
+    wiezaCisnien,
+    wyspaMlynska,
+  ];
 }
 
 class $AssetsFontsGen {
@@ -56,11 +111,79 @@ class $AssetsImagesGen {
   AssetGenImage get dashboard =>
       const AssetGenImage('assets/images/dashboard.png');
 
+  /// File path: assets/images/fontanna_potop.png
+  AssetGenImage get fontannaPotop =>
+      const AssetGenImage('assets/images/fontanna_potop.png');
+
+  /// File path: assets/images/kanal_bydgoski.png
+  AssetGenImage get kanalBydgoski =>
+      const AssetGenImage('assets/images/kanal_bydgoski.png');
+
+  /// File path: assets/images/katedra_bydgoska.png
+  AssetGenImage get katedraBydgoska =>
+      const AssetGenImage('assets/images/katedra_bydgoska.png');
+
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/luczniczka.png
+  AssetGenImage get luczniczka =>
+      const AssetGenImage('assets/images/luczniczka.png');
+
+  /// File path: assets/images/mistrz_twardowski.png
+  AssetGenImage get mistrzTwardowski =>
+      const AssetGenImage('assets/images/mistrz_twardowski.png');
+
+  /// File path: assets/images/mlyny_rothera.png
+  AssetGenImage get mlynyRothera =>
+      const AssetGenImage('assets/images/mlyny_rothera.png');
+
+  /// File path: assets/images/muzeum_mydla.png
+  AssetGenImage get muzeumMydla =>
+      const AssetGenImage('assets/images/muzeum_mydla.png');
+
+  /// File path: assets/images/muzeum_wojsk_ladowych.png
+  AssetGenImage get muzeumWojskLadowych =>
+      const AssetGenImage('assets/images/muzeum_wojsk_ladowych.png');
+
+  /// File path: assets/images/myslecinek.png
+  AssetGenImage get myslecinek =>
+      const AssetGenImage('assets/images/myslecinek.png');
+
+  /// File path: assets/images/przechodzacy_przez_rzeke.png
+  AssetGenImage get przechodzacyPrzezRzeke =>
+      const AssetGenImage('assets/images/przechodzacy_przez_rzeke.png');
+
+  /// File path: assets/images/stadion_zawiszy.png
+  AssetGenImage get stadionZawiszy =>
+      const AssetGenImage('assets/images/stadion_zawiszy.png');
+
+  /// File path: assets/images/wieza_cisnien.png
+  AssetGenImage get wiezaCisnien =>
+      const AssetGenImage('assets/images/wieza_cisnien.png');
+
+  /// File path: assets/images/wyspa_mlynska.png
+  AssetGenImage get wyspaMlynska =>
+      const AssetGenImage('assets/images/wyspa_mlynska.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [dashboard, logo];
+  List<AssetGenImage> get values => [
+    dashboard,
+    fontannaPotop,
+    kanalBydgoski,
+    katedraBydgoska,
+    logo,
+    luczniczka,
+    mistrzTwardowski,
+    mlynyRothera,
+    muzeumMydla,
+    muzeumWojskLadowych,
+    myslecinek,
+    przechodzacyPrzezRzeke,
+    stadionZawiszy,
+    wiezaCisnien,
+    wyspaMlynska,
+  ];
 }
 
 class Assets {
