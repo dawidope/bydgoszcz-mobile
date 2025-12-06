@@ -9,6 +9,7 @@ import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MonumentDetailPage extends StatelessWidget {
@@ -27,6 +28,21 @@ class MonumentDetailPage extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  Future<void> _shareMonument(Monument monument) async {
+    final shareText =
+        '''
+🏛️ ${monument.name}
+
+${monument.shortDescription}
+
+📍 Zobacz na mapie: ${monument.googleMapsUrl.isNotEmpty ? monument.googleMapsUrl : 'Brak lokalizacji'}
+
+Odkryj więcej zabytków Bydgoszczy! 🌟
+''';
+
+    await Share.share(shareText, subject: monument.name);
   }
 
   @override
@@ -267,9 +283,7 @@ class MonumentDetailPage extends StatelessWidget {
                       label: 'Udostępnij',
                       icon: Icons.share_rounded,
                       color: AppColors.bydgoszczBlue,
-                      onPressed: () {
-                        // TODO: Share functionality
-                      },
+                      onPressed: () => _shareMonument(displayMonument),
                     ),
                     const SizedBox(height: 32),
                   ],
