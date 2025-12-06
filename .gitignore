@@ -12,8 +12,10 @@
 .swiftpm/
 migrate_working_dir/
 
-.gitingore
-storylandia/
+.gitignore
+.storylandia/
+*.md
+.env
 
 # IntelliJ related
 *.iml

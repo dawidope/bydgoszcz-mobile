@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Core dependencies for hackathon
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
   go_router: ^15.1.3
@@ -18,12 +19,17 @@ dependencies:
   dio: ^5.9.0
   get_it: ^9.2.0
   json_annotation: ^4.9.0
+  shared_preferences: ^2.3.5
+  equatable: ^2.0.7
+  
+  # Optional - keep existing
   cached_network_image: ^3.4.1
   just_audio: ^0.10.5
   just_audio_web: ^0.4.16
   just_audio_windows: ^0.2.2
   share_plus: ^12.0.1
   image_picker: ^1.2.1
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
