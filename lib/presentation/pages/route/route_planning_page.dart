@@ -86,7 +86,6 @@ class _RoutePlanningPageState extends State<RoutePlanningPage>
     return BlocConsumer<RoutePlanningCubit, RoutePlanningState>(
       listener: (context, state) {
         if (state is RoutePlanningSuccess) {
-          // TODO: Navigate to route details page
           context.go('/route/adventure/${state.route.id}');
         } else if (state is RoutePlanningError) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,5 @@
 import 'package:bydgoszcz/core/network/openai_service.dart';
-import 'package:bydgoszcz/data/local/app_storage.dart';
+import 'package:bydgoszcz/data/local/route_storage.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/quiz_question.dart';
@@ -31,15 +31,15 @@ class RoutePlanningError extends RoutePlanningState {
 class RoutePlanningCubit extends Cubit<RoutePlanningState> {
   final OpenAiService _openAiService;
   final MonumentsRepository _monumentsRepository;
-  final AppStorage _appStorage;
+  final RouteStorage _routeStorage;
 
   RoutePlanningCubit({
     required OpenAiService openAiService,
     required MonumentsRepository monumentsRepository,
-    required AppStorage appStorage,
+    RouteStorage? routeStorage,
   }) : _openAiService = openAiService,
        _monumentsRepository = monumentsRepository,
-       _appStorage = appStorage,
+       _routeStorage = routeStorage ?? RouteStorage(),
        super(RoutePlanningInitial());
 
   Future<void> generateRoute({
@@ -83,7 +83,8 @@ class RoutePlanningCubit extends Cubit<RoutePlanningState> {
       final route = _parseRouteFromResponse(result, selectedMonuments);
 
       // Save route to storage
-      await _appStorage.saveCurrentRoute(route);
+      _routeStorage.saveRoute(route);
+      _routeStorage.setCurrentRoute(route);
 
       emit(RoutePlanningSuccess(route));
     } catch (e) {

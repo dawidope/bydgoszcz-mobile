@@ -16,6 +16,7 @@ import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/route_adventure_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,6 @@ class AppRouter {
           create: (context) => RoutePlanningCubit(
             openAiService: getIt.get<OpenAiService>(),
             monumentsRepository: getIt.get<MonumentsRepository>(),
-            appStorage: getIt.get<AppStorage>(),
           ),
           child: const RoutePlanningPage(),
         ),
@@ -98,6 +98,13 @@ class AppRouter {
             monument: monument,
             imageBytes: imageBytes,
           );
+        },
+      ),
+      GoRoute(
+        path: '/route/adventure/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return RouteAdventurePage(routeId: id);
         },
       ),
     ],
