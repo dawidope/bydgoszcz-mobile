@@ -23,10 +23,9 @@ class MonumentDescriptionError extends MonumentDescriptionState {
 class MonumentDescriptionCubit extends Cubit<MonumentDescriptionState> {
   final OpenAiService _openAiService;
 
-  MonumentDescriptionCubit({
-    required OpenAiService openAiService,
-  }) : _openAiService = openAiService,
-       super(MonumentDescriptionInitial());
+  MonumentDescriptionCubit({required OpenAiService openAiService})
+    : _openAiService = openAiService,
+      super(MonumentDescriptionInitial());
 
   Future<void> getMonumentDetails(String monumentName) async {
     if (monumentName.trim().isEmpty) {

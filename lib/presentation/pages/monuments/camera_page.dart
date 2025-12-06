@@ -62,10 +62,7 @@ class _CameraPageState extends State<CameraPage> {
         if (state is MonumentRecognitionSuccess) {
           context.push(
             '/monuments/detail/${state.monument.id}',
-            extra: {
-              'monument': state.monument,
-              'imageBytes': state.imageBytes,
-            },
+            extra: {'monument': state.monument, 'imageBytes': state.imageBytes},
           );
         } else if (state is MonumentRecognitionError) {
           ScaffoldMessenger.of(context).showSnackBar(

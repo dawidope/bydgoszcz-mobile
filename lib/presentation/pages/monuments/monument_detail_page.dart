@@ -24,11 +24,10 @@ class MonumentDetailPage extends StatelessWidget {
     this.monumentId,
     this.monument,
     this.imageBytes,
-  })
-    : assert(
-        monumentId != null || monument != null,
-        'Either monumentId or monument must be provided',
-      );
+  }) : assert(
+         monumentId != null || monument != null,
+         'Either monumentId or monument must be provided',
+       );
 
   Future<void> _openGoogleMaps(String url) async {
     if (url.isEmpty) return;
