@@ -162,7 +162,7 @@ class HomePage extends StatelessWidget {
           subtitle: 'Stwórz własną ścieżkę po zabytkach',
           icon: Icons.route_rounded,
           onTap: () {
-            // TODO: Navigate to route creation
+            context.push('/route/planning');
           },
         ),
         const SizedBox(height: 12),

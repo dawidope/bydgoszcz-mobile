@@ -14,6 +14,7 @@ import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -39,6 +40,10 @@ class AppRouter {
       GoRoute(
         path: '/monuments',
         builder: (context, state) => const MonumentsPage(),
+      ),
+      GoRoute(
+        path: '/route/planning',
+        builder: (context, state) => const RoutePlanningPage(),
       ),
       GoRoute(
         path: '/monuments/list',
