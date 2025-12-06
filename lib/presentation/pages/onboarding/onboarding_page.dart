@@ -15,12 +15,13 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  int _age = 10;
+  final _ageController = TextEditingController();
   final Set<String> _selectedInterests = {};
 
   @override
   void dispose() {
     _nameController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
@@ -28,7 +29,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (_formKey.currentState!.validate() && _selectedInterests.isNotEmpty) {
       final profile = UserProfile(
         name: _nameController.text.trim(),
-        age: _age,
+        age: int.tryParse(_ageController.text.trim()) ?? 10,
         interests: _selectedInterests.toList(),
       );
 
@@ -50,21 +51,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: [
                 const SizedBox(height: 32),
                 Text(
-                  'Witaj w Bydgoszczy!',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Zamień spacer po Bydgoszczy w przygodę',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  'Opowiedz nam o sobie',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
+                // Imię field
+                Text(
+                  'Imię',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Jak masz na imię?',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -75,64 +79,102 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   },
                 ),
                 const SizedBox(height: 24),
+                // Wiek field
                 Text(
-                  'Ile masz lat?',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Slider(
-                  value: _age.toDouble(),
-                  min: 7,
-                  max: 99,
-                  divisions: 92,
-                  label: '$_age lat',
-                  onChanged: (value) {
-                    setState(() {
-                      _age = value.toInt();
-                    });
-                  },
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Co Cię interesuje?',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  'Wiek',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Expanded(
-                  child: ListView(
-                    children: AppConstants.availableInterests.map((interest) {
-                      return CheckboxListTile(
-                        title: Text(interest),
-                        value: _selectedInterests.contains(interest),
-                        onChanged: (checked) {
+                TextFormField(
+                  controller: _ageController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Podaj swój wiek';
+                    }
+                    final age = int.tryParse(value.trim());
+                    if (age == null || age < 1 || age > 120) {
+                      return 'Podaj poprawny wiek';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 32),
+                // Zainteresowania section
+                const Spacer(),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: AppConstants.availableInterests.map((interest) {
+                    final isSelected = _selectedInterests.contains(interest);
+                    return SizedBox(
+                      width: (MediaQuery.of(context).size.width - 72) / 2,
+                      child: FilledButton(
+                        onPressed: () {
                           setState(() {
-                            if (checked == true) {
-                              _selectedInterests.add(interest);
-                            } else {
+                            if (isSelected) {
                               _selectedInterests.remove(interest);
+                            } else {
+                              _selectedInterests.add(interest);
                             }
                           });
                         },
-                      );
-                    }).toList(),
-                  ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent,
+                          foregroundColor: isSelected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
+                          side: isSelected
+                              ? null
+                              : BorderSide(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        child: Text(interest),
+                      ),
+                    );
+                  }).toList(),
                 ),
+                const Spacer(),
                 if (_selectedInterests.isEmpty)
                   const Padding(
                     padding: EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Wybierz przynajmniej jedno zainteresowanie',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Colors.red, fontSize: 12),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: _completeOnboarding,
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Zaczynamy przygodę!'),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  child: const Text(
+                    'Gotowe',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
