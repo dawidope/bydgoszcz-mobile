@@ -331,9 +331,7 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
         placeholder: (context, url) => Container(
           color: AppColors.surfaceVariant,
           child: const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primary,
-            ),
+            child: CircularProgressIndicator(color: AppColors.primary),
           ),
         ),
         errorWidget: (context, url, error) => fallbackWidget,

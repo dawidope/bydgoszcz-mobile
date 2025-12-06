@@ -156,10 +156,7 @@ class _MonumentCardState extends State<_MonumentCard>
               // Obrazek z kolorowym akcentem
               Stack(
                 children: [
-                  _buildMonumentImage(
-                    widget.monument.imageUrl,
-                    accentColor,
-                  ),
+                  _buildMonumentImage(widget.monument.imageUrl, accentColor),
                   // Kolorowy pasek akcentowy
                   Positioned(
                     left: 0,

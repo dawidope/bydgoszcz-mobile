@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
           }
 
           return WaveBackground(
-            waveHeight: 140,
+            waveHeight: 110,
             child: SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 24),
