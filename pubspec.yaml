@@ -1,0 +1,46 @@
+name: bydgoszcz
+description: "Bydgoszcz"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.1.1
+  go_router: ^15.1.3
+  freezed_annotation: ^2.4.4
+  dio: ^5.9.0
+  get_it: ^9.2.0
+  json_annotation: ^4.9.0
+  cached_network_image: ^3.4.1
+  just_audio: ^0.10.5
+  just_audio_web: ^0.4.16
+  just_audio_windows: ^0.2.2
+  share_plus: ^12.0.1
+  image_picker: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.11
+  json_serializable: ^6.8.0
+  flutter_gen_runner: ^5.9.0
+  freezed: ^2.5.8
+  
+flutter_gen:
+  integrations:
+    image: true
+    flutter_svg: true
+    rive: true
+    lottie: true
+
+
+flutter:
+  uses-material-design: true
