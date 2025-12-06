@@ -41,12 +41,10 @@ class MonumentDescriptionCubit extends Cubit<MonumentDescriptionState> {
     emit(MonumentDescriptionLoading());
 
     try {
-      // Call OpenAI API with monument name
       final result = await _openAiService.getMonumentDetailsByName(
         monumentName: monumentName,
       );
 
-      // Check confidence level
       final confidence = result['confidence'] as String?;
       if (confidence == 'low' || result['name'] == 'unknown') {
         emit(
@@ -57,25 +55,10 @@ class MonumentDescriptionCubit extends Cubit<MonumentDescriptionState> {
         return;
       }
 
-      // Try to find matching monument from repository first
-      final allMonuments = _monumentsRepository.getMonuments();
-      Monument? foundMonument;
-
-      for (final monument in allMonuments) {
-        if (_nameMatches(monument.name, result['name'] as String?)) {
-          foundMonument = monument;
-          break;
-        }
-      }
-
-      // If found in repository, use that (has audio, image, etc.)
-      // Otherwise create new Monument from AI data
-      final resultMonument =
-          foundMonument ??
-          Monument.fromRecognition(
-            result,
-            'assets/images/monument_placeholder.png',
-          );
+      final resultMonument = Monument.fromRecognition(
+        result,
+        'assets/images/logo.png',
+      );
 
       emit(MonumentDescriptionSuccess(resultMonument));
     } catch (e) {
@@ -85,47 +68,6 @@ class MonumentDescriptionCubit extends Cubit<MonumentDescriptionState> {
         ),
       );
     }
-  }
-
-  bool _nameMatches(String monumentName, String? recognizedName) {
-    if (recognizedName == null) return false;
-
-    final monumentLower = monumentName.toLowerCase();
-    final recognizedLower = recognizedName.toLowerCase();
-
-    // Check if recognized name contains key words from monument name
-    return monumentLower.contains(recognizedLower) ||
-        recognizedLower.contains(monumentLower) ||
-        _containsKeyWords(monumentLower, recognizedLower);
-  }
-
-  bool _containsKeyWords(String monumentName, String recognizedName) {
-    // Extract key words (ignore common words)
-    final ignoreWords = {
-      'w',
-      'na',
-      'przy',
-      'pod',
-      'z',
-      'do',
-      'i',
-      'the',
-      'of',
-      'in',
-    };
-
-    final monumentWords = monumentName
-        .split(' ')
-        .where((w) => w.length > 3 && !ignoreWords.contains(w))
-        .toList();
-
-    final recognizedWords = recognizedName.split(' ').toSet();
-
-    // Check if at least one key word matches
-    return monumentWords.any(
-      (word) =>
-          recognizedWords.any((rw) => rw.contains(word) || word.contains(rw)),
-    );
   }
 
   void reset() {

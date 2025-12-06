@@ -3,6 +3,7 @@ import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -155,17 +156,9 @@ class _MonumentCardState extends State<_MonumentCard>
               // Obrazek z kolorowym akcentem
               Stack(
                 children: [
-                  Container(
-                    width: 120,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.1),
-                      image: DecorationImage(
-                        image: AssetImage(widget.monument.imageUrl),
-                        fit: BoxFit.cover,
-                        onError: (error, stackTrace) {},
-                      ),
-                    ),
+                  _buildMonumentImage(
+                    widget.monument.imageUrl,
+                    accentColor,
                   ),
                   // Kolorowy pasek akcentowy
                   Positioned(
@@ -228,5 +221,50 @@ class _MonumentCardState extends State<_MonumentCard>
         ),
       ),
     );
+  }
+
+  Widget _buildMonumentImage(String imageUrl, Color accentColor) {
+    final isNetworkUrl =
+        imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+
+    if (isNetworkUrl) {
+      return Container(
+        width: 120,
+        height: 130,
+        color: accentColor.withOpacity(0.1),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+            child: CircularProgressIndicator(
+              color: accentColor,
+              strokeWidth: 2,
+            ),
+          ),
+          errorWidget: (context, url, error) => Center(
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Asset image
+      return Container(
+        width: 120,
+        height: 130,
+        decoration: BoxDecoration(
+          color: accentColor.withOpacity(0.1),
+          image: DecorationImage(
+            image: AssetImage(imageUrl),
+            fit: BoxFit.cover,
+            onError: (error, stackTrace) {},
+          ),
+        ),
+      );
+    }
   }
 }

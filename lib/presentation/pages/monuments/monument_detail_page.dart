@@ -7,6 +7,7 @@ import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -302,23 +303,40 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
         imageUrl.contains('\\') ||
         imageUrl.startsWith('file://');
 
+    final isNetworkUrl =
+        imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+
+    final fallbackWidget = Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/logo.png'),
+          fit: BoxFit.contain,
+        ),
+        color: AppColors.surfaceVariant,
+      ),
+    );
+
     if (isFilePath) {
       // It's a file from camera
       return Image.file(
         File(imageUrl),
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            color: AppColors.surfaceVariant,
-            child: const Center(
-              child: Icon(
-                Icons.broken_image_rounded,
-                size: 64,
-                color: AppColors.textDisabled,
-              ),
+        errorBuilder: (context, error, stackTrace) => fallbackWidget,
+      );
+    } else if (isNetworkUrl) {
+      // It's a network URL - use cached_network_image
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Container(
+          color: AppColors.surfaceVariant,
+          child: const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primary,
             ),
-          );
-        },
+          ),
+        ),
+        errorWidget: (context, url, error) => fallbackWidget,
       );
     } else {
       // It's an asset
@@ -327,8 +345,10 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
           image: DecorationImage(
             image: AssetImage(imageUrl),
             fit: BoxFit.cover,
+            onError: (error, stackTrace) {},
           ),
         ),
+        child: fallbackWidget,
       );
     }
   }
