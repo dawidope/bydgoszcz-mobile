@@ -74,33 +74,64 @@ class MonumentDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Audio player lub obrazek
-                  if (displayMonument.audioUrl != null)
-                    AudioPlayerWidget(
-                      roundedCorners: false,
-                      audioAssetPath: displayMonument.audioUrl!,
-                      imageAssetPath: displayMonument.imageUrl,
-                    )
-                  else
-                    _buildImage(displayMonument.imageUrl),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.3),
+            flexibleSpace: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final isCollapsed =
+                    constraints.maxHeight <= kToolbarHeight + 50;
+
+                return FlexibleSpaceBar(
+                  title: AnimatedOpacity(
+                    opacity: isCollapsed ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Text(
+                      displayMonument.name,
+                      style: AppTypography.titleMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                  titlePadding: const EdgeInsets.only(
+                    left: 60,
+                    bottom: 16,
+                    right: 16,
+                  ),
+                  centerTitle: false,
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Audio player lub obrazek
+                      if (displayMonument.audioUrl != null)
+                        AudioPlayerWidget(
+                          roundedCorners: false,
+                          audioAssetPath: displayMonument.audioUrl!,
+                          imageAssetPath: displayMonument.imageUrl,
+                        )
+                      else
+                        _buildImage(displayMonument.imageUrl),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
           // Content
@@ -251,9 +282,7 @@ class MonumentDetailPage extends StatelessWidget {
     );
   }
 
-  /// Build image widget - handles both asset images and file images
   Widget _buildImage(String imageUrl) {
-    // Check if it's a file path (from camera) or asset path
     final isFilePath =
         imageUrl.startsWith('/') ||
         imageUrl.contains('\\') ||
