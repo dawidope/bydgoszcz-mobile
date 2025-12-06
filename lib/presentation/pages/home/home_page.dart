@@ -158,7 +158,7 @@ class HomePage extends StatelessWidget {
 
         // Action Cards
         ActionCard.primary(
-          title: 'Wyznacz trasę',
+          title: 'Zaplanuj przygodę',
           subtitle: 'Stwórz własną ścieżkę po zabytkach',
           icon: Icons.route_rounded,
           onTap: () {
