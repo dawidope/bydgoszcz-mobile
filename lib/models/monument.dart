@@ -19,4 +19,21 @@ class Monument with _$Monument {
 
   factory Monument.fromJson(Map<String, dynamic> json) =>
       _$MonumentFromJson(json);
+
+  factory Monument.fromRecognition(
+    Map<String, dynamic> data,
+    String capturedImagePath,
+  ) {
+    return Monument(
+      id: 'recognized_${DateTime.now().millisecondsSinceEpoch}',
+      name: data['name'] ?? 'Nieznany zabytek',
+      shortDescription: data['shortDescription'] ?? '',
+      facts: data['facts'] ?? '',
+      imageUrl: capturedImagePath,
+      googleMapsUrl: data['googleMapsUrl'] ?? '',
+      audioUrl: null,
+      story: null,
+      funFact: null,
+    );
+  }
 }

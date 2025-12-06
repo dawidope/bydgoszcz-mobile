@@ -128,7 +128,7 @@ class MonumentsPage extends StatelessWidget {
           subtitle: 'Rozpoznaj zabytek aparatem',
           icon: Icons.camera_alt_rounded,
           onTap: () {
-            // TODO: Navigate to camera/photo
+            context.push('/monuments/camera');
           },
         ),
         const SizedBox(height: 16),

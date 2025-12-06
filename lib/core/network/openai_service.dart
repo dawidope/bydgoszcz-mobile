@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/constants/openai_constants.dart';
@@ -129,19 +130,113 @@ Odpowiedź w formacie JSON.''';
       userPrompt: userPrompt,
     );
 
-    // Parse JSON response
-    // Note: GPT może zwrócić markdown z ```json, trzeba to oczyścić
-    final jsonString = response
-        .replaceAll('```json', '')
-        .replaceAll('```', '')
-        .trim();
-
-    // W prawdziwej implementacji użyj json.decode
-    // Dla uproszczenia zwracam mock
     return {
       'title': 'Magiczna wyprawa $userName po Bydgoszczy',
       'narration': response,
       'stops': monuments,
     };
+  }
+
+  Future<Map<String, dynamic>> recognizeMonument({
+    required String base64Image,
+  }) async {
+    try {
+      final systemPrompt =
+          '''You are an expert on Bydgoszcz monuments and landmarks in Poland.
+Analyze the provided image and identify the monument or landmark.
+This photo was taken in Bydgoszcz, Poland.
+Provide detailed information about the monument in Polish language.''';
+
+      final userPrompt = 'Identify this monument and provide all details.';
+
+      final function = {
+        'name': 'identify_monument',
+        'description':
+            'Identifies a monument from Bydgoszcz and provides structured information',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'name': {
+              'type': 'string',
+              'description': 'The exact name of the monument in Polish',
+            },
+            'shortDescription': {
+              'type': 'string',
+              'description':
+                  'A brief 1-2 sentence description of the monument in Polish',
+            },
+            'facts': {
+              'type': 'string',
+              'description':
+                  'Interesting historical facts about this monument in Polish (3-5 sentences)',
+            },
+            'imageUrl': {
+              'type': 'string',
+              'description':
+                  'Default placeholder image path: assets/images/monument_placeholder.png',
+            },
+            'googleMapsUrl': {
+              'type': 'string',
+              'description':
+                  'Google Maps search url in format: https://www.google.com/maps/place/NUMBER+STREET+CITY+STATE',
+            },
+            'confidence': {
+              'type': 'string',
+              'enum': ['high', 'medium', 'low'],
+              'description': 'Confidence level of identification',
+            },
+          },
+          'required': [
+            'name',
+            'shortDescription',
+            'facts',
+            'imageUrl',
+            'googleMapsUrl',
+            'confidence',
+          ],
+        },
+      };
+
+      final requestBody = {
+        'model': 'gpt-4.1',
+        'messages': [
+          {'role': 'system', 'content': systemPrompt},
+          {
+            'role': 'user',
+            'content': [
+              {'type': 'text', 'text': userPrompt},
+              {
+                'type': 'image_url',
+                'image_url': {
+                  'url': 'data:image/jpeg;base64,$base64Image',
+                  'detail': 'high',
+                },
+              },
+            ],
+          },
+        ],
+        'functions': [function],
+        'function_call': {'name': 'identify_monument'},
+      };
+
+      final response = await _dio.post(
+        OpenAiConstants.chatCompletions,
+        data: requestBody,
+      );
+
+      final message = response.data['choices'][0]['message'];
+
+      if (message['function_call'] != null) {
+        final functionArgs = message['function_call']['arguments'];
+        final j = json.decode(functionArgs);
+        return j;
+      }
+
+      throw Exception('No function call in response');
+    } on DioException catch (e) {
+      throw Exception('OpenAI Vision API error: ${e.message}');
+    } catch (e) {
+      throw Exception('Error recognizing monument: $e');
+    }
   }
 }

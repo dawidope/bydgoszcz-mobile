@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
+import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +12,17 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MonumentDetailPage extends StatelessWidget {
-  final String monumentId;
+  final String? monumentId;
+  final Monument? monument;
 
-  const MonumentDetailPage({super.key, required this.monumentId});
+  const MonumentDetailPage({super.key, this.monumentId, this.monument})
+    : assert(
+        monumentId != null || monument != null,
+        'Either monumentId or monument must be provided',
+      );
 
   Future<void> _openGoogleMaps(String url) async {
+    if (url.isEmpty) return;
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -22,10 +31,13 @@ class MonumentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repository = MonumentsRepository();
-    final monument = repository.getMonumentById(monumentId);
+    final Monument? displayMonument =
+        monument ??
+        (monumentId != null
+            ? MonumentsRepository().getMonumentById(monumentId!)
+            : null);
 
-    if (monument == null) {
+    if (displayMonument == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -40,7 +52,6 @@ class MonumentDetailPage extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          // Custom App Bar z obrazkiem
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
@@ -68,22 +79,14 @@ class MonumentDetailPage extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   // Audio player lub obrazek
-                  if (monument.audioUrl != null)
+                  if (displayMonument.audioUrl != null)
                     AudioPlayerWidget(
                       roundedCorners: false,
-                      audioAssetPath: monument.audioUrl!,
-                      imageAssetPath: monument.imageUrl,
+                      audioAssetPath: displayMonument.audioUrl!,
+                      imageAssetPath: displayMonument.imageUrl,
                     )
                   else
-                    Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(monument.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  // Gradient overlay
+                    _buildImage(displayMonument.imageUrl),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -147,7 +150,7 @@ class MonumentDetailPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     // Nazwa
                     Text(
-                      monument.name,
+                      displayMonument.name,
                       style: AppTypography.displaySmall.copyWith(
                         color: AppColors.textPrimary,
                       ),
@@ -177,7 +180,7 @@ class MonumentDetailPage extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              monument.shortDescription,
+                              displayMonument.shortDescription,
                               style: AppTypography.bodyMedium.copyWith(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w500,
@@ -211,7 +214,7 @@ class MonumentDetailPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     // Pełny opis
                     Text(
-                      monument.facts,
+                      displayMonument.facts,
                       style: AppTypography.bodyLarge.copyWith(
                         color: AppColors.textPrimary,
                         height: 1.7,
@@ -219,12 +222,15 @@ class MonumentDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     // Przycisk nawigacji
-                    PrimaryButton(
-                      label: 'Nawiguj do zabytku',
-                      icon: Icons.map_rounded,
-                      onPressed: () => _openGoogleMaps(monument.googleMapsUrl),
-                    ),
-                    const SizedBox(height: 16),
+                    if (displayMonument.googleMapsUrl.isNotEmpty)
+                      PrimaryButton(
+                        label: 'Nawiguj do zabytku',
+                        icon: Icons.map_rounded,
+                        onPressed: () =>
+                            _openGoogleMaps(displayMonument.googleMapsUrl),
+                      ),
+                    if (displayMonument.googleMapsUrl.isNotEmpty)
+                      const SizedBox(height: 16),
                     // Przycisk udostępniania
                     SecondaryButton(
                       label: 'Udostępnij',
@@ -243,5 +249,44 @@ class MonumentDetailPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Build image widget - handles both asset images and file images
+  Widget _buildImage(String imageUrl) {
+    // Check if it's a file path (from camera) or asset path
+    final isFilePath =
+        imageUrl.startsWith('/') ||
+        imageUrl.contains('\\') ||
+        imageUrl.startsWith('file://');
+
+    if (isFilePath) {
+      // It's a file from camera
+      return Image.file(
+        File(imageUrl),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: AppColors.surfaceVariant,
+            child: const Center(
+              child: Icon(
+                Icons.broken_image_rounded,
+                size: 64,
+                color: AppColors.textDisabled,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      // It's an asset
+      return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
   }
 }

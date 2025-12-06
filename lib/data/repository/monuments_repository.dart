@@ -177,4 +177,9 @@ class MonumentsRepository {
         )
         .toList();
   }
+
+  /// Get all monuments
+  List<Monument> getMonuments() {
+    return _monuments;
+  }
 }

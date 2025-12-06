@@ -1,12 +1,18 @@
+import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/data/local/app_storage.dart';
+import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/di/injector.dart';
+import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/presentation/bloc/app_cubit.dart';
+import 'package:bydgoszcz/presentation/bloc/monument_recognition_cubit.dart';
 import 'package:bydgoszcz/presentation/pages/home/home_page.dart';
+import 'package:bydgoszcz/presentation/pages/monuments/camera_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -36,10 +42,25 @@ class AppRouter {
         builder: (context, state) => const MonumentsListPage(),
       ),
       GoRoute(
+        path: '/monuments/camera',
+        builder: (context, state) => BlocProvider(
+          create: (context) => MonumentRecognitionCubit(
+            openAiService: getIt.get<OpenAiService>(),
+            monumentsRepository: getIt.get<MonumentsRepository>(),
+          ),
+          child: const CameraPage(),
+        ),
+      ),
+      GoRoute(
         path: '/monuments/detail/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          return MonumentDetailPage(monumentId: id);
+          // Check if Monument object was passed via extra
+          final monument = state.extra as Monument?;
+          return MonumentDetailPage(
+            monumentId: monument == null ? id : null,
+            monument: monument,
+          );
         },
       ),
     ],
