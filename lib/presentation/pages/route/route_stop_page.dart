@@ -6,9 +6,9 @@ import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/models/route_stop.dart';
-import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RouteStopPage extends StatelessWidget {
   final String routeId;
@@ -96,52 +96,93 @@ class _RouteStopContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: AppShadows.soft,
+      body: CustomScrollView(
+        slivers: [
+          // App Bar z obrazkiem
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            backgroundColor: AppColors.primary,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: AppShadows.soft,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 18,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
             ),
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18,
-              color: AppColors.textPrimary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    monument.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.surfaceVariant,
+                        child: const Center(
+                          child: Icon(
+                            Icons.image_not_supported_rounded,
+                            size: 64,
+                            color: AppColors.textDisabled,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 24),
-                _buildMonumentImage(),
-                const SizedBox(height: 24),
-                _buildStorySection(),
-                const SizedBox(height: 24),
-                _buildFunFactSection(),
-                const SizedBox(height: 32),
-                _buildActionButtons(context),
-                const SizedBox(height: 24),
-              ],
+
+          // Content
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildStopBadge(),
+                  const SizedBox(height: 24),
+                  _buildStorySection(),
+                  const SizedBox(height: 24),
+                  _buildFunFactSection(),
+                  const SizedBox(height: 32),
+                  _buildActionButtons(context),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildStopBadge() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,35 +248,6 @@ class _RouteStopContent extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildMonumentImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        monument.imageUrl,
-        width: double.infinity,
-        height: 220,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: double.infinity,
-            height: 220,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceVariant,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.image_not_supported_rounded,
-                size: 64,
-                color: AppColors.textDisabled,
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 
@@ -346,26 +358,32 @@ class _RouteStopContent extends StatelessWidget {
           icon: Icons.map_rounded,
           label: 'Otwórz w mapie',
           color: AppColors.bydgoszczBlue,
-          onTap: () {
-            // TODO: Open map with monument location
+          onTap: () async {
+            if (monument.googleMapsUrl.isNotEmpty) {
+              final uri = Uri.parse(monument.googleMapsUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            }
           },
         ),
         const SizedBox(height: 12),
         _ActionButton(
           icon: Icons.info_rounded,
           label: 'Szczegóły zabytku',
-          color: AppColors.primary,
+          color: AppColors.accent,
           onTap: () {
-            // TODO: Navigate to monument details
+            context.push('/monuments/detail/${monument.id}', extra: monument);
           },
         ),
         const SizedBox(height: 12),
-        PrimaryButton(
-          label: stop.visited ? 'Odwiedzone ✓' : 'Potwierdź obecność',
+        _ActionButton(
           icon: stop.visited
               ? Icons.check_circle_rounded
               : Icons.location_on_rounded,
-          onPressed: stop.visited
+          label: stop.visited ? 'Odwiedzone ✓' : 'Potwierdź obecność',
+          color: stop.visited ? AppColors.success : AppColors.primary,
+          onTap: stop.visited
               ? null
               : () {
                   // TODO: Confirm presence
@@ -380,7 +398,7 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _ActionButton({
     required this.icon,
@@ -391,37 +409,53 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDisabled = onTap == null;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: isDisabled ? AppColors.surfaceVariant : color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+          border: Border.all(
+            color: isDisabled
+                ? AppColors.textDisabled.withOpacity(0.3)
+                : color.withOpacity(0.3),
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: isDisabled
+                    ? AppColors.textDisabled.withOpacity(0.2)
+                    : color.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: color, size: 20),
+              child: Icon(
+                icon,
+                color: isDisabled ? AppColors.textDisabled : color,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 label,
                 style: AppTypography.titleSmall.copyWith(
-                  color: color,
+                  color: isDisabled ? AppColors.textDisabled : color,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, color: color, size: 16),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: isDisabled ? AppColors.textDisabled : color,
+              size: 16,
+            ),
           ],
         ),
       ),
