@@ -6,6 +6,7 @@ import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CompletedRoutePage extends StatefulWidget {
   final GeneratedRoute route;
@@ -97,6 +98,21 @@ class _CompletedRoutePageState extends State<CompletedRoutePage>
 
   void _goHome() {
     context.go('/');
+  }
+
+  Future<void> _shareCertificate() async {
+    final shareText =
+        '''
+🏆 CERTYFIKAT ODKRYWCY BYDGOSZCZY 🏆
+
+Ukończyłem przygodę: "${widget.route.title}"
+
+Zebrałem ${widget.route.stops.length} magicznych pieczęci i zostałem oficjalnym Odkrywcą Bydgoszczy! 🎉
+
+Dołącz do zabawy i odkrywaj zabytki Bydgoszczy! 🏛️✨
+''';
+
+    await Share.share(shareText, subject: 'Certyfikat Odkrywcy Bydgoszczy');
   }
 
   @override
@@ -378,6 +394,36 @@ class _CompletedRoutePageState extends State<CompletedRoutePage>
   Widget _buildButtons() {
     return Column(
       children: [
+        // Share button
+        GestureDetector(
+          onTap: _shareCertificate,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.bydgoszczBlue,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: AppShadows.card,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.share_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Text(
+                  'Udostępnij',
+                  style: AppTypography.titleMedium.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
         // Primary button - go to adventures
         GestureDetector(
           onTap: _goToAdventures,

@@ -11,6 +11,7 @@ import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class RouteAdventurePage extends StatefulWidget {
   final String routeId;
@@ -27,6 +28,26 @@ class _RouteAdventurePageState extends State<RouteAdventurePage> {
   void _stopAudioAndNavigate(String route) {
     _storyCardKey.currentState?.stopAudio();
     context.push(route);
+  }
+
+  Future<void> _shareRoute(GeneratedRoute route) async {
+    final visitedCount = route.stops.where((s) => s.visited).length;
+    final totalStops = route.stops.length;
+    final stopNames = route.stops.map((s) => '📍 ${s.name}').join('\n');
+
+    final shareText =
+        '''
+🗺️ ${route.title}
+
+${route.narration.length > 200 ? '${route.narration.substring(0, 200)}...' : route.narration}
+
+Miejsca do odwiedzenia ($visitedCount/$totalStops):
+$stopNames
+
+Dołącz do zabawy i odkrywaj zabytki Bydgoszczy! 🏛️✨
+''';
+
+    await Share.share(shareText, subject: route.title);
   }
 
   @override
@@ -123,9 +144,7 @@ class _RouteAdventurePageState extends State<RouteAdventurePage> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                onPressed: () {
-                  // TODO: Share route
-                },
+                onPressed: () => _shareRoute(route),
               ),
               const SizedBox(width: 8),
             ],
