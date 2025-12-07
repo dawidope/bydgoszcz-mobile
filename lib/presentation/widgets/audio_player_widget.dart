@@ -14,10 +14,10 @@ class AudioPlayerWidget extends StatefulWidget {
   });
 
   @override
-  State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
+  State<AudioPlayerWidget> createState() => AudioPlayerWidgetState();
 }
 
-class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
+class AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   late final AudioPlayer _audioPlayer;
   bool _isPlaying = false;
   bool _isLoading = false;
@@ -72,7 +72,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     }
   }
 
-  Future<void> stop() async {
+  Future<void> stopAudio() async {
     try {
       await _audioPlayer.stop();
       await _audioPlayer.seek(Duration.zero);

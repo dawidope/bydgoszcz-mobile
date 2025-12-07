@@ -11,8 +11,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final GlobalKey<AudioPlayerWidgetState> _audioPlayerKey = GlobalKey();
+
+  void _stopAudioAndNavigate(String route) {
+    _audioPlayerKey.currentState?.stopAudio();
+    context.push(route);
+  }
 
   static const List<String> _greetings = [
     'Gotowy na przygodę?',
@@ -143,6 +155,7 @@ class HomePage extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: AudioPlayerWidget(
+            key: _audioPlayerKey,
             audioAssetPath: 'assets/audio/dashboard.mp3',
             imageAssetPath: 'assets/images/dashboard.png',
           ),
@@ -177,18 +190,14 @@ class HomePage extends StatelessWidget {
           title: 'Zaplanuj przygodę',
           subtitle: 'Stwórz własną ścieżkę po zabytkach',
           icon: Icons.route_rounded,
-          onTap: () {
-            context.push('/route/planning');
-          },
+          onTap: () => _stopAudioAndNavigate('/route/planning'),
         ),
         const SizedBox(height: 12),
         ActionCard.secondary(
           title: 'Poznaj zabytek',
           subtitle: 'Odkryj historię pojedynczego miejsca',
           icon: Icons.account_balance_rounded,
-          onTap: () {
-            context.push('/monuments');
-          },
+          onTap: () => _stopAudioAndNavigate('/monuments'),
         ),
         const SizedBox(height: 12),
         ActionCard.light(
@@ -196,9 +205,7 @@ class HomePage extends StatelessWidget {
           subtitle: 'Zobacz swoje osiągnięcia i medale',
           icon: Icons.emoji_events_rounded,
           accentColor: AppColors.accent,
-          onTap: () {
-            context.push('/route/adventures');
-          },
+          onTap: () => _stopAudioAndNavigate('/route/adventures'),
         ),
       ],
     );
