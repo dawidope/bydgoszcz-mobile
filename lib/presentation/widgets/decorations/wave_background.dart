@@ -31,7 +31,10 @@ class WaveBackground extends StatelessWidget {
           left: 0,
           right: 0,
           child: CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, waveHeight),
+            size: Size(
+              MediaQuery.of(context).size.width,
+              waveHeight + MediaQuery.of(context).padding.top,
+            ),
             painter: _WavePainter(
               topColor: topColor ?? AppColors.primary,
               bottomColor: bottomColor ?? AppColors.primaryLight,
