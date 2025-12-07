@@ -7,8 +7,8 @@ class OpenAiConstants {
   static const String audioSpeech = '/audio/speech';
 
   static const String gpt4Model = 'gpt-4o';
-  static const String ttsModel = 'tts-1';
-  static const String ttsVoice = 'alloy';
+  static const String ttsModel = 'gpt-4o-mini-tts';
+  static const String ttsVoice = 'cedar';
 
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 60);

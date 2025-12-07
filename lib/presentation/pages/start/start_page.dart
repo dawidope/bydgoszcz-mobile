@@ -2,6 +2,7 @@ import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/gen/assets.gen.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
+import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -82,6 +83,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
               ),
 
               const Spacer(flex: 3),
+              SimpleAudioPlayer(text: "witam serdecznie"),
 
               // Przycisk
               SlideTransition(

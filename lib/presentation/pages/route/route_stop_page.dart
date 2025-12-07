@@ -6,6 +6,7 @@ import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/monument.dart';
 import 'package:bydgoszcz/models/route_stop.dart';
+import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -81,7 +82,7 @@ class _NotFoundPage extends StatelessWidget {
   }
 }
 
-class _RouteStopContent extends StatelessWidget {
+class _RouteStopContent extends StatefulWidget {
   final GeneratedRoute route;
   final RouteStop stop;
   final Monument monument;
@@ -91,6 +92,20 @@ class _RouteStopContent extends StatelessWidget {
     required this.stop,
     required this.monument,
   });
+
+  @override
+  State<_RouteStopContent> createState() => _RouteStopContentState();
+}
+
+class _RouteStopContentState extends State<_RouteStopContent> {
+  final GlobalKey<_SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
+
+  @override
+  void dispose() {
+    // Stop audio before navigating away
+    _audioPlayerKey.currentState?.stopAudio();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -294,6 +309,12 @@ class _RouteStopContent extends StatelessWidget {
               height: 1.6,
               fontStyle: FontStyle.italic,
             ),
+          ),
+          const SizedBox(height: 16),
+          SimpleAudioPlayer(
+            text: stop.shortStory,
+            label: 'Posłuchaj bajki',
+            color: AppColors.bydgoszczBlue,
           ),
         ],
       ),

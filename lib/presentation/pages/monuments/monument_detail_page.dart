@@ -6,8 +6,8 @@ import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/monument.dart';
-import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
+import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -130,15 +130,8 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Audio player lub obrazek
-                      if (displayMonument.audioUrl != null)
-                        AudioPlayerWidget(
-                          roundedCorners: false,
-                          audioAssetPath: displayMonument.audioUrl!,
-                          imageAssetPath: displayMonument.imageUrl,
-                        )
-                      else
-                        _buildImage(displayMonument.imageUrl),
+                      // Obrazek
+                      _buildImage(displayMonument.imageUrl),
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -274,7 +267,18 @@ Odkryj więcej zabytków Bydgoszczy! 🌟
                         height: 1.7,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    // Audio player - MP3 lub TTS
+                    SimpleAudioPlayer(
+                      audioAssetPath: displayMonument.audioUrl,
+                      text: displayMonument.audioUrl == null
+                          ? '${displayMonument.name}. ${displayMonument.shortDescription}. ${displayMonument.facts}'
+                          : null,
+                      label: 'Posłuchaj opowieści',
+                      color: AppColors.bydgoszczBlue,
+                    ),
+                    const SizedBox(height: 24),
+                    const SizedBox(height: 8),
                     // Przycisk nawigacji
                     if (displayMonument.googleMapsUrl.isNotEmpty)
                       PrimaryButton(

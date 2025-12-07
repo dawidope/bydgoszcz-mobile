@@ -6,18 +6,33 @@ import 'package:bydgoszcz/data/repository/monuments_repository.dart';
 import 'package:bydgoszcz/models/generated_route.dart';
 import 'package:bydgoszcz/models/route_stop.dart';
 import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
+import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class RouteAdventurePage extends StatelessWidget {
+class RouteAdventurePage extends StatefulWidget {
   final String routeId;
 
   const RouteAdventurePage({super.key, required this.routeId});
 
   @override
+  State<RouteAdventurePage> createState() => _RouteAdventurePageState();
+}
+
+class _RouteAdventurePageState extends State<RouteAdventurePage> {
+  final GlobalKey<_SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
+
+  @override
+  void dispose() {
+    // Stop audio before navigating away
+    _audioPlayerKey.currentState?.stopAudio();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final routeStorage = RouteStorage();
-    final route = routeStorage.getRoute(routeId);
+    final route = routeStorage.getRoute(widget.routeId);
 
     if (route == null) {
       return _buildNotFoundPage(context);
@@ -182,16 +197,6 @@ class RouteAdventurePage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: PrimaryButton(
-            label: 'Zakończ podróż',
-            onPressed: () => context.go('/'),
-            icon: Icons.check_circle_rounded,
-          ),
-        ),
-      ),
     );
   }
 
@@ -238,6 +243,13 @@ class RouteAdventurePage extends StatelessWidget {
               height: 1.6,
               fontStyle: FontStyle.italic,
             ),
+          ),
+          const SizedBox(height: 16),
+          SimpleAudioPlayer(
+            key: _audioPlayerKey,
+            text: story,
+            label: 'Posłuchaj bajki',
+            color: AppColors.bydgoszczBlue,
           ),
         ],
       ),
