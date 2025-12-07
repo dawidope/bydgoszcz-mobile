@@ -56,6 +56,15 @@ class _SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
     _audioPlayer.playerStateStream.listen(_onPlayerStateChanged);
   }
 
+  @override
+  void deactivate() {
+    // Stop audio when widget is removed from the tree (before navigation)
+    if (_isPlaying) {
+      _audioPlayer.stop();
+    }
+    super.deactivate();
+  }
+
   void _onPlayerStateChanged(PlayerState state) {
     if (!mounted) return;
 
@@ -90,6 +99,10 @@ class _SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
 
   @override
   void dispose() {
+    // Ensure audio is stopped before disposing
+    if (_isPlaying) {
+      _audioPlayer.stop();
+    }
     _audioPlayer.dispose();
     super.dispose();
   }

@@ -82,7 +82,7 @@ class _NotFoundPage extends StatelessWidget {
   }
 }
 
-class _RouteStopContent extends StatefulWidget {
+class _RouteStopContent extends StatelessWidget {
   final GeneratedRoute route;
   final RouteStop stop;
   final Monument monument;
@@ -92,20 +92,6 @@ class _RouteStopContent extends StatefulWidget {
     required this.stop,
     required this.monument,
   });
-
-  @override
-  State<_RouteStopContent> createState() => _RouteStopContentState();
-}
-
-class _RouteStopContentState extends State<_RouteStopContent> {
-  final GlobalKey<_SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
-
-  @override
-  void dispose() {
-    // Stop audio before navigating away
-    _audioPlayerKey.currentState?.stopAudio();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

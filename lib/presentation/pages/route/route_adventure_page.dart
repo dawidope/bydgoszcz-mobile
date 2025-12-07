@@ -10,29 +10,15 @@ import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class RouteAdventurePage extends StatefulWidget {
+class RouteAdventurePage extends StatelessWidget {
   final String routeId;
 
   const RouteAdventurePage({super.key, required this.routeId});
 
   @override
-  State<RouteAdventurePage> createState() => _RouteAdventurePageState();
-}
-
-class _RouteAdventurePageState extends State<RouteAdventurePage> {
-  final GlobalKey<_SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
-
-  @override
-  void dispose() {
-    // Stop audio before navigating away
-    _audioPlayerKey.currentState?.stopAudio();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final routeStorage = RouteStorage();
-    final route = routeStorage.getRoute(widget.routeId);
+    final route = routeStorage.getRoute(routeId);
 
     if (route == null) {
       return _buildNotFoundPage(context);
@@ -246,7 +232,6 @@ class _RouteAdventurePageState extends State<RouteAdventurePage> {
           ),
           const SizedBox(height: 16),
           SimpleAudioPlayer(
-            key: _audioPlayerKey,
             text: story,
             label: 'Posłuchaj bajki',
             color: AppColors.bydgoszczBlue,
