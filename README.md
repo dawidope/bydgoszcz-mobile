@@ -2,7 +2,7 @@
   <img src="logo.png" alt="Logo" width="200"/>
 </p>
 
-<h1 align="center">🏛️ Magiczna pieczęć Bydgoszczy</h1>
+<h1 align="center">🏛️ Magiczna pieczęć odkrywcy - Bydgoszcz</h1>
 
 <p align="center">
   <strong>Interaktywna aplikacja do zwiedzania Bydgoszczy</strong><br>
@@ -26,6 +26,10 @@ Dzięki połączeniu nowoczesnych technologii, generowania narracji i przyjazneg
 
 **Projekt łączy edukację, rozrywkę i lokalną historię, pokazując Bydgoszcz w zupełnie nowym wymiarze.**
 
+### 👨‍👩‍👧‍👦 Dla kogo?
+
+Aplikacja jest przeznaczona dla wszystkich, ale **szczególnie dla rodziców z dziećmi**. Magiczne opowieści i system nagród zachęcają dzieci do aktywnego odkrywania historii miasta, zamieniając zwykły spacer w ekscytującą przygodę pełną nauki i zabawy. Dzieci uczą się historii w sposób angau017cujący, a rodzice mogą spędzić jakościowy czas z rodziną, odkrywając razem lokalną kulturę.
+
 ### 🎯 Realizowane wyzwanie hackathonowe
 
 **Tytuł:** Bydgoszcz – Ścieżki Pamięci 2.0
@@ -40,8 +44,15 @@ Dzięki połączeniu nowoczesnych technologii, generowania narracji i przyjazneg
 |---|---|
 | 🌐 **Demo Web** | [bydgoszczmob.tojest.dev](https://bydgoszczmob.tojest.dev/) |
 | 🎬 **Demo Video** | [YouTube Shorts](https://www.youtube.com/shorts/mKvLFy54uCU) |
+| 🎥 **Full Demo Video** | [video.mov](video/video.mov) |
 | 📱 **APK Android** | [Pobierz](apk/app-release.apk) |
 | 📊 **Pitch** | [pitch.pdf](pitch.pdf) |
+
+### 🎥 Demo Video
+
+https://github.com/user-attachments/assets/video.mov
+
+*Alternatywnie: [YouTube Shorts](https://www.youtube.com/shorts/mKvLFy54uCU) | [Pobierz video.mov](video/video.mov)*
 
 ---
 
