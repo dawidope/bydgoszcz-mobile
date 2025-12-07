@@ -83,7 +83,10 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
               ),
 
               const Spacer(flex: 3),
-              SimpleAudioPlayer(text: "witam serdecznie"),
+              SimpleAudioPlayer(
+                text:
+                    "witam serdecdadasdadadadad ad adad  da dasad sad sa sdasd  asdznie",
+              ),
 
               // Przycisk
               SlideTransition(

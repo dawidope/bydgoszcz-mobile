@@ -1,12 +1,14 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
 import 'package:bydgoszcz/di/injector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Prosty widget audio playera z opcją:
 /// - audioAssetPath - ścieżka do pliku MP3 w assets
@@ -48,6 +50,7 @@ class SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
   bool _isGeneratingTTS = false;
   bool _hasError = false;
   Uint8List? _ttsAudioBytes;
+  String? _tempFilePath; // For Android workaround
 
   @override
   void initState() {
@@ -140,8 +143,20 @@ class SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
           }
 
           // Set audio source and play immediately
-          final audioSource = _AudioBytesSource(_ttsAudioBytes!);
-          await _audioPlayer.setAudioSource(audioSource);
+          // Android workaround: save to temp file instead of using StreamAudioSource
+          if (defaultTargetPlatform == TargetPlatform.android) {
+            if (_tempFilePath == null) {
+              final tempDir = await getTemporaryDirectory();
+              _tempFilePath =
+                  '${tempDir.path}/tts_audio_${widget.hashCode}.mp3';
+            }
+            final tempFile = File(_tempFilePath!);
+            await tempFile.writeAsBytes(_ttsAudioBytes!);
+            await _audioPlayer.setFilePath(_tempFilePath!);
+          } else {
+            final audioSource = _AudioBytesSource(_ttsAudioBytes!);
+            await _audioPlayer.setAudioSource(audioSource);
+          }
           await _audioPlayer.play();
         }
       }
@@ -271,12 +286,16 @@ class _AudioBytesSource extends StreamAudioSource {
   Future<StreamAudioResponse> request([int? start, int? end]) async {
     start ??= 0;
     end ??= _bytes.length;
+
+    // Create a proper stream from the byte range
+    final data = _bytes.sublist(start, end);
+
     return StreamAudioResponse(
       sourceLength: _bytes.length,
-      contentLength: end - start,
+      contentLength: data.length,
       offset: start,
-      stream: Stream.value(_bytes.sublist(start, end)),
-      contentType: 'audio/mpeg',
+      stream: Stream.fromIterable([data]),
+      contentType: 'audio/mp3',
     );
   }
 }
