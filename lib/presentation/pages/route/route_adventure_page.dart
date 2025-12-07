@@ -10,24 +10,36 @@ import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class RouteAdventurePage extends StatelessWidget {
+class RouteAdventurePage extends StatefulWidget {
   final String routeId;
 
   const RouteAdventurePage({super.key, required this.routeId});
 
   @override
-  Widget build(BuildContext context) {
-    final routeStorage = RouteStorage();
-    final route = routeStorage.getRoute(routeId);
+  State<RouteAdventurePage> createState() => _RouteAdventurePageState();
+}
 
-    if (route == null) {
-      return _buildNotFoundPage(context);
-    }
+class _RouteAdventurePageState extends State<RouteAdventurePage> {
+  final GlobalKey<_StoryCardState> _storyCardKey = GlobalKey();
 
-    return _buildContent(context, route);
+  void _stopAudioAndNavigate(String route) {
+    _storyCardKey.currentState?.stopAudio();
+    context.push(route);
   }
 
-  Widget _buildNotFoundPage(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
+    final routeStorage = RouteStorage();
+    final route = routeStorage.getRoute(widget.routeId);
+
+    if (route == null) {
+      return _buildNotFoundPage();
+    }
+
+    return _buildContent(route);
+  }
+
+  Widget _buildNotFoundPage() {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -65,7 +77,7 @@ class RouteAdventurePage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, GeneratedRoute route) {
+  Widget _buildContent(GeneratedRoute route) {
     final monumentsRepository = MonumentsRepository();
     final allMonuments = monumentsRepository.getAllMonuments();
 
@@ -133,7 +145,7 @@ class RouteAdventurePage extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // Story introduction
-                _buildStoryCard(route.narration),
+                _StoryCard(key: _storyCardKey, story: route.narration),
 
                 const SizedBox(height: 32),
 
@@ -170,9 +182,9 @@ class RouteAdventurePage extends StatelessWidget {
                     child: _StopCard(
                       stop: stop,
                       imageUrl: monument.imageUrl,
-                      onTap: () {
-                        context.push('/route/${route.id}/stop/${stop.id}');
-                      },
+                      onTap: () => _stopAudioAndNavigate(
+                        '/route/${route.id}/stop/${stop.id}',
+                      ),
                     ),
                   );
                 }),
@@ -185,8 +197,26 @@ class RouteAdventurePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildStoryCard(String story) {
+class _StoryCard extends StatefulWidget {
+  final String story;
+
+  const _StoryCard({super.key, required this.story});
+
+  @override
+  State<_StoryCard> createState() => _StoryCardState();
+}
+
+class _StoryCardState extends State<_StoryCard> {
+  final GlobalKey<SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
+
+  void stopAudio() {
+    _audioPlayerKey.currentState?.stopAudio();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -223,7 +253,7 @@ class RouteAdventurePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            story,
+            widget.story,
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               height: 1.6,
@@ -232,7 +262,8 @@ class RouteAdventurePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SimpleAudioPlayer(
-            text: story,
+            key: _audioPlayerKey,
+            text: widget.story,
             label: 'Posłuchaj bajki',
             color: AppColors.bydgoszczBlue,
           ),

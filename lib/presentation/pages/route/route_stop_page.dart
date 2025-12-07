@@ -82,7 +82,7 @@ class _NotFoundPage extends StatelessWidget {
   }
 }
 
-class _RouteStopContent extends StatelessWidget {
+class _RouteStopContent extends StatefulWidget {
   final GeneratedRoute route;
   final RouteStop stop;
   final Monument monument;
@@ -92,6 +92,18 @@ class _RouteStopContent extends StatelessWidget {
     required this.stop,
     required this.monument,
   });
+
+  @override
+  State<_RouteStopContent> createState() => _RouteStopContentState();
+}
+
+class _RouteStopContentState extends State<_RouteStopContent> {
+  final GlobalKey<SimpleAudioPlayerState> _audioPlayerKey = GlobalKey();
+
+  void _stopAudioAndNavigate(String route, {Object? extra}) {
+    _audioPlayerKey.currentState?.stopAudio();
+    context.push(route, extra: extra);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +139,7 @@ class _RouteStopContent extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    monument.imageUrl,
+                    widget.monument.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -193,21 +205,21 @@ class _RouteStopContent extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: stop.visited
+                color: widget.stop.visited
                     ? AppColors.success
                     : AppColors.bydgoszczBlue,
                 shape: BoxShape.circle,
                 boxShadow: AppShadows.soft,
               ),
               child: Center(
-                child: stop.visited
+                child: widget.stop.visited
                     ? const Icon(
                         Icons.check_rounded,
                         color: Colors.white,
                         size: 24,
                       )
                     : Text(
-                        '${stop.order}',
+                        '${widget.stop.order}',
                         style: AppTypography.titleMedium.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -221,14 +233,14 @@ class _RouteStopContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Przystanek ${stop.order}',
+                    'Przystanek ${widget.stop.order}',
                     style: AppTypography.labelMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    route.title,
+                    widget.route.title,
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textDisabled,
                     ),
@@ -242,7 +254,7 @@ class _RouteStopContent extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Text(
-          stop.name,
+          widget.stop.name,
           style: AppTypography.displaySmall.copyWith(
             color: AppColors.textPrimary,
             height: 1.2,
@@ -289,7 +301,7 @@ class _RouteStopContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            stop.shortStory,
+            widget.stop.shortStory,
             style: AppTypography.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               height: 1.6,
@@ -298,7 +310,8 @@ class _RouteStopContent extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SimpleAudioPlayer(
-            text: stop.shortStory,
+            key: _audioPlayerKey,
+            text: widget.stop.shortStory,
             label: 'Posłuchaj bajki',
             color: AppColors.bydgoszczBlue,
           ),
@@ -344,7 +357,7 @@ class _RouteStopContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  stop.funFact,
+                  widget.stop.funFact,
                   style: AppTypography.bodyMedium.copyWith(
                     color: AppColors.textSecondary,
                     height: 1.5,
@@ -366,8 +379,8 @@ class _RouteStopContent extends StatelessWidget {
           label: 'Otwórz w mapie',
           color: AppColors.bydgoszczBlue,
           onTap: () async {
-            if (monument.googleMapsUrl.isNotEmpty) {
-              final uri = Uri.parse(monument.googleMapsUrl);
+            if (widget.monument.googleMapsUrl.isNotEmpty) {
+              final uri = Uri.parse(widget.monument.googleMapsUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               }
@@ -380,22 +393,29 @@ class _RouteStopContent extends StatelessWidget {
           label: 'Szczegóły zabytku',
           color: AppColors.accent,
           onTap: () {
-            context.push('/monuments/detail/${monument.id}', extra: monument);
+            _stopAudioAndNavigate(
+              '/monuments/detail/${widget.monument.id}',
+              extra: widget.monument,
+            );
           },
         ),
         const SizedBox(height: 12),
         _ActionButton(
-          icon: stop.visited
+          icon: widget.stop.visited
               ? Icons.check_circle_rounded
               : Icons.location_on_rounded,
-          label: stop.visited ? 'Odwiedzone ✓' : 'Potwierdź obecność',
+          label: widget.stop.visited ? 'Odwiedzone ✓' : 'Potwierdź obecność',
           color: AppColors.success,
-          onTap: stop.visited
+          onTap: widget.stop.visited
               ? null
               : () {
-                  context.push(
-                    '/route/${route.id}/stop/${stop.id}/confirm',
-                    extra: {'route': route, 'stop': stop, 'monument': monument},
+                  _stopAudioAndNavigate(
+                    '/route/${widget.route.id}/stop/${widget.stop.id}/confirm',
+                    extra: {
+                      'route': widget.route,
+                      'stop': widget.stop,
+                      'monument': widget.monument,
+                    },
                   );
                 },
         ),

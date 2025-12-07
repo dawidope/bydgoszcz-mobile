@@ -38,10 +38,10 @@ class SimpleAudioPlayer extends StatefulWidget {
        );
 
   @override
-  State<SimpleAudioPlayer> createState() => _SimpleAudioPlayerState();
+  State<SimpleAudioPlayer> createState() => SimpleAudioPlayerState();
 }
 
-class _SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
+class SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
   late final AudioPlayer _audioPlayer;
   bool _isPlaying = false;
   bool _isLoading = false;
