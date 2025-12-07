@@ -50,9 +50,7 @@ Aplikacja jest przeznaczona dla wszystkich, ale **szczególnie dla rodziców z d
 
 ### 🎥 Demo Video
 
-<video src="https://raw.githubusercontent.com/dawidope/bydgoszcz-mobile/refs/heads/main/video/video.mov" controls width="100%" style="max-width: 600px;">
-  Twoja przeglądarka nie obsługuje odtwarzacza video.
-</video>
+https://github.com/user-attachments/assets/bfe40bf7-2f1d-47e5-95f0-4f75a1b8e2bd
 
 *Alternatywnie: [YouTube Shorts](https://www.youtube.com/shorts/mKvLFy54uCU) | [Pobierz video.mov](video/video.mov)*
 
