@@ -5,6 +5,7 @@ import 'package:bydgoszcz/presentation/widgets/buttons/primary_button.dart';
 import 'package:bydgoszcz/presentation/widgets/simple_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -18,10 +19,13 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  String _version = '';
 
   @override
   void initState() {
     super.initState();
+
+    _loadVersion();
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -48,6 +52,15 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 300), () {
       _slideController.forward();
     });
+  }
+
+  Future<void> _loadVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _version = 'v${packageInfo.version}';
+      });
+    }
   }
 
   @override
@@ -188,11 +201,20 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: 16),
         Text(
-          'Odkryj historię miasta krok po kroku',
+          'Odkryj historię miasta krok po kroku...',
           style: AppTypography.bodySmall.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
+        if (_version.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            _version,
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.textDisabled,
+            ),
+          ),
+        ],
       ],
     );
   }
