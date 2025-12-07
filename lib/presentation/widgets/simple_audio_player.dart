@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
@@ -143,8 +144,14 @@ class SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
           }
 
           // Set audio source and play immediately
-          // Android workaround: save to temp file instead of using StreamAudioSource
-          if (defaultTargetPlatform == TargetPlatform.android) {
+          // Platform-specific workarounds for audio playback
+          if (kIsWeb) {
+            // Web (including iOS Safari): use data URI which works better with autoplay policies
+            final base64Audio = base64Encode(_ttsAudioBytes!);
+            final dataUri = 'data:audio/mp3;base64,$base64Audio';
+            await _audioPlayer.setUrl(dataUri);
+          } else if (defaultTargetPlatform == TargetPlatform.android) {
+            // Android: save to temp file
             if (_tempFilePath == null) {
               final tempDir = await getTemporaryDirectory();
               _tempFilePath =
@@ -154,6 +161,7 @@ class SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
             await tempFile.writeAsBytes(_ttsAudioBytes!);
             await _audioPlayer.setFilePath(_tempFilePath!);
           } else {
+            // iOS/macOS/Windows native: use StreamAudioSource
             final audioSource = _AudioBytesSource(_ttsAudioBytes!);
             await _audioPlayer.setAudioSource(audioSource);
           }
