@@ -7,6 +7,7 @@ import 'package:bydgoszcz/presentation/widgets/audio_player_widget.dart';
 import 'package:bydgoszcz/presentation/widgets/cards/action_card.dart';
 import 'package:bydgoszcz/presentation/widgets/decorations/wave_background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,49 +26,65 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userName = context.read<AppCubit>().state.userProfile?.name ?? '';
 
-    return Scaffold(
-      body: BlocBuilder<AppCubit, AppState>(
-        builder: (context, state) {
-          final profile = state.userProfile;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
+            final profile = state.userProfile;
 
-          if (profile == null) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
+            if (profile == null) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            }
 
-          return WaveBackground(
-            waveHeight: 110,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header z powitaniem
-                    _buildHeader(context, userName),
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header z wave background
+                  Stack(
+                    children: [
+                      // Wave background
+                      SizedBox(
+                        height: 180,
+                        child: WaveBackground(
+                          waveHeight: 110,
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
+                      // Header content with safe area padding
+                      Positioned.fill(
+                        child: SafeArea(child: _buildHeader(context, userName)),
+                      ),
+                    ],
+                  ),
 
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 14),
 
-                    // Audio Player
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: _buildAudioSection(context),
-                    ),
+                  // Audio Player
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildAudioSection(context),
+                  ),
 
-                    const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                    // Akcje
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: _buildActionsSection(context),
-                    ),
-                  ],
-                ),
+                  // Akcje
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildActionsSection(context),
+                  ),
+                ],
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -114,7 +131,6 @@ class HomePage extends StatelessWidget {
             Text('Poznaj Bydgoszcz', style: AppTypography.headlineMedium),
           ],
         ),
-        const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.only(left: 16),
           child: Text(
