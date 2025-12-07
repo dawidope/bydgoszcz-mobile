@@ -26,25 +26,43 @@ class StopQuizPage extends StatefulWidget {
 
 class _StopQuizPageState extends State<StopQuizPage> {
   int? _selectedAnswerIndex;
-  bool _answered = false;
+  int? _wrongAnswerIndex; // Track wrong answer for red highlight
   bool _isCorrect = false;
+  bool _showingWrongFeedback = false;
 
   void _selectAnswer(int index) {
-    if (_answered) return;
+    if (_showingWrongFeedback) return; // Don't allow selection during feedback
 
     final quiz = widget.stop.quiz;
+    final isCorrect = index == quiz.correctAnswerIndex;
 
-    setState(() {
-      _selectedAnswerIndex = index;
-      _answered = true;
-      _isCorrect = index == quiz.correctAnswerIndex;
-    });
+    if (isCorrect) {
+      setState(() {
+        _selectedAnswerIndex = index;
+        _isCorrect = true;
+      });
+      // Mark stop as completed only on correct answer
+      _markStopCompleted();
+    } else {
+      // Wrong answer - show red feedback briefly, then allow retry
+      setState(() {
+        _wrongAnswerIndex = index;
+        _showingWrongFeedback = true;
+      });
 
-    // Mark stop as visited and quiz completed
-    _markStopCompleted();
+      // Reset after 800ms to allow another try
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted) {
+          setState(() {
+            _wrongAnswerIndex = null;
+            _showingWrongFeedback = false;
+          });
+        }
+      });
+    }
   }
 
-  void _markStopCompleted() {
+  GeneratedRoute _markStopCompleted() {
     final routeStorage = RouteStorage();
 
     // Update the stop as visited
@@ -65,11 +83,27 @@ class _StopQuizPageState extends State<StopQuizPage> {
     );
 
     routeStorage.saveRoute(updatedRoute);
+    return updatedRoute;
   }
 
-  void _continue() {
-    // Go back to route adventure page
-    context.go('/route/adventure/${widget.route.id}');
+  void _claimReward() {
+    // Get updated route with this stop marked as completed
+    final updatedRoute = RouteStorage().getRoute(widget.route.id);
+    if (updatedRoute == null) return;
+
+    // Check if all stops are now completed
+    final allStopsCompleted = updatedRoute.stops.every((s) => s.visited);
+
+    // Navigate to seal reward page
+    context.pushReplacement(
+      '/route/${widget.route.id}/stop/${widget.stop.id}/reward',
+      extra: {
+        'route': updatedRoute,
+        'stop': widget.stop,
+        'monument': widget.monument,
+        'allStopsCompleted': allStopsCompleted,
+      },
+    );
   }
 
   @override
@@ -96,8 +130,8 @@ class _StopQuizPageState extends State<StopQuizPage> {
 
               const SizedBox(height: 32),
 
-              // Result and continue button
-              if (_answered) _buildResult(),
+              // Result and claim reward button
+              if (_isCorrect) _buildSuccessResult(),
 
               const SizedBox(height: 24),
             ],
@@ -232,43 +266,42 @@ class _StopQuizPageState extends State<StopQuizPage> {
     required bool isCorrect,
   }) {
     final isSelected = _selectedAnswerIndex == index;
-    final showResult = _answered;
+    final isWrongSelected = _wrongAnswerIndex == index;
+    final hasCorrectAnswer = _isCorrect;
 
     Color backgroundColor;
     Color borderColor;
     Color textColor;
     IconData? icon;
 
-    if (showResult) {
-      if (isCorrect) {
-        backgroundColor = AppColors.success.withOpacity(0.1);
-        borderColor = AppColors.success;
-        textColor = AppColors.success;
-        icon = Icons.check_circle_rounded;
-      } else if (isSelected && !isCorrect) {
-        backgroundColor = AppColors.error.withOpacity(0.1);
-        borderColor = AppColors.error;
-        textColor = AppColors.error;
-        icon = Icons.cancel_rounded;
-      } else {
-        backgroundColor = AppColors.surfaceVariant;
-        borderColor = AppColors.textDisabled.withOpacity(0.3);
-        textColor = AppColors.textDisabled;
-        icon = null;
-      }
+    if (hasCorrectAnswer && isCorrect) {
+      // Show correct answer in green
+      backgroundColor = AppColors.success.withOpacity(0.1);
+      borderColor = AppColors.success;
+      textColor = AppColors.success;
+      icon = Icons.check_circle_rounded;
+    } else if (isWrongSelected) {
+      // Show wrong selection in red temporarily
+      backgroundColor = AppColors.error.withOpacity(0.1);
+      borderColor = AppColors.error;
+      textColor = AppColors.error;
+      icon = Icons.cancel_rounded;
+    } else if (hasCorrectAnswer) {
+      // Dim other options when correct answer is found
+      backgroundColor = AppColors.surfaceVariant;
+      borderColor = AppColors.textDisabled.withOpacity(0.3);
+      textColor = AppColors.textDisabled;
+      icon = null;
     } else {
-      backgroundColor = isSelected
-          ? AppColors.bydgoszczBlue.withOpacity(0.1)
-          : AppColors.surfaceVariant;
-      borderColor = isSelected
-          ? AppColors.bydgoszczBlue
-          : AppColors.textDisabled.withOpacity(0.3);
-      textColor = isSelected ? AppColors.bydgoszczBlue : AppColors.textPrimary;
+      // Normal state - not answered yet
+      backgroundColor = AppColors.surfaceVariant;
+      borderColor = AppColors.textDisabled.withOpacity(0.3);
+      textColor = AppColors.textPrimary;
       icon = null;
     }
 
     return GestureDetector(
-      onTap: () => _selectAnswer(index),
+      onTap: hasCorrectAnswer ? null : () => _selectAnswer(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
@@ -314,30 +347,22 @@ class _StopQuizPageState extends State<StopQuizPage> {
     );
   }
 
-  Widget _buildResult() {
+  Widget _buildSuccessResult() {
     return Column(
       children: [
-        // Result message
+        // Success message
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _isCorrect
-                ? AppColors.success.withOpacity(0.1)
-                : AppColors.accent.withOpacity(0.1),
+            color: AppColors.success.withOpacity(0.1),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _isCorrect
-                  ? AppColors.success.withOpacity(0.3)
-                  : AppColors.accent.withOpacity(0.3),
-            ),
+            border: Border.all(color: AppColors.success.withOpacity(0.3)),
           ),
           child: Row(
             children: [
-              Icon(
-                _isCorrect
-                    ? Icons.emoji_events_rounded
-                    : Icons.lightbulb_rounded,
-                color: _isCorrect ? AppColors.success : AppColors.accent,
+              const Icon(
+                Icons.emoji_events_rounded,
+                color: AppColors.success,
                 size: 28,
               ),
               const SizedBox(width: 12),
@@ -346,19 +371,15 @@ class _StopQuizPageState extends State<StopQuizPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _isCorrect ? 'Świetnie! 🎉' : 'Prawie!',
+                      'Świetnie! 🎉',
                       style: AppTypography.titleMedium.copyWith(
-                        color: _isCorrect
-                            ? AppColors.success
-                            : AppColors.accent,
+                        color: AppColors.success,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _isCorrect
-                          ? 'Poprawna odpowiedź! Zdobywasz punkty!'
-                          : 'Następnym razem będzie lepiej!',
+                      'Poprawna odpowiedź! Odbierz swoją nagrodę!',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -372,30 +393,32 @@ class _StopQuizPageState extends State<StopQuizPage> {
 
         const SizedBox(height: 24),
 
-        // Continue button
-        _buildContinueButton(),
+        // Claim reward button
+        _buildClaimRewardButton(),
       ],
     );
   }
 
-  Widget _buildContinueButton() {
+  Widget _buildClaimRewardButton() {
     return GestureDetector(
-      onTap: _continue,
+      onTap: _claimReward,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          gradient: LinearGradient(
+            colors: [AppColors.accent, AppColors.accent.withRed(200)],
+          ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: AppShadows.card,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+            const Icon(Icons.stars_rounded, color: Colors.white),
             const SizedBox(width: 12),
             Text(
-              'Kontynuuj przygodę',
+              'Odbierz nagrodę! 🏆',
               style: AppTypography.titleMedium.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

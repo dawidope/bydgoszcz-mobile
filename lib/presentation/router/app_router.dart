@@ -18,11 +18,13 @@ import 'package:bydgoszcz/presentation/pages/monuments/monument_detail_page.dart
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_list_page.dart';
 import 'package:bydgoszcz/presentation/pages/monuments/monuments_page.dart';
 import 'package:bydgoszcz/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/completed_route_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/confirm_presence_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/my_adventures_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_adventure_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_planning_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/route_stop_page.dart';
+import 'package:bydgoszcz/presentation/pages/route/seal_reward_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/stop_quiz_page.dart';
 import 'package:bydgoszcz/presentation/pages/route/verify_photo_page.dart';
 import 'package:bydgoszcz/presentation/pages/start/start_page.dart';
@@ -158,6 +160,30 @@ class AppRouter {
           final stop = extra['stop'] as RouteStop;
           final monument = extra['monument'] as Monument;
           return StopQuizPage(route: route, stop: stop, monument: monument);
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/stop/:stopId/reward',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final route = extra['route'] as GeneratedRoute;
+          final stop = extra['stop'] as RouteStop;
+          final monument = extra['monument'] as Monument;
+          final allStopsCompleted = extra['allStopsCompleted'] as bool;
+          return SealRewardPage(
+            route: route,
+            stop: stop,
+            monument: monument,
+            allStopsCompleted: allStopsCompleted,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/route/:routeId/completed',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final route = extra['route'] as GeneratedRoute;
+          return CompletedRoutePage(route: route);
         },
       ),
     ],
