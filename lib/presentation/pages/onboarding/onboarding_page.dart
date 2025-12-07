@@ -178,6 +178,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: TextFormField(
             controller: _nameController,
             style: AppTypography.bodyLarge,
+            textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(
               hintText: 'Twoje imię',
               hintStyle: AppTypography.bodyLarge.copyWith(
