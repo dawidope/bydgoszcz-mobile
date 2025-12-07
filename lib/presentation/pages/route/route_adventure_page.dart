@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
@@ -143,6 +145,11 @@ class _RouteAdventurePageState extends State<RouteAdventurePage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Cover image (if available)
+                if (route.coverImageBase64 != null &&
+                    route.coverImageBase64!.isNotEmpty)
+                  _CoverImage(base64Image: route.coverImageBase64!),
 
                 // Story introduction
                 _StoryCard(key: _storyCardKey, story: route.narration),
@@ -386,6 +393,46 @@ class _StopCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CoverImage extends StatelessWidget {
+  final String base64Image;
+
+  const _CoverImage({required this.base64Image});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: AppShadows.card,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.memory(
+          base64Decode(base64Image),
+          width: double.infinity,
+          height: 240,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: double.infinity,
+              height: 240,
+              color: AppColors.surfaceVariant,
+              child: const Center(
+                child: Icon(
+                  Icons.image_not_supported_rounded,
+                  color: AppColors.textDisabled,
+                  size: 48,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

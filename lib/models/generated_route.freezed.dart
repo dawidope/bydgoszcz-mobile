@@ -29,6 +29,7 @@ mixin _$GeneratedRoute {
   MedalType? get medal => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get completedAt => throw _privateConstructorUsedError;
+  String? get coverImageBase64 => throw _privateConstructorUsedError;
 
   /// Serializes this GeneratedRoute to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $GeneratedRouteCopyWith<$Res> {
     MedalType? medal,
     DateTime? createdAt,
     DateTime? completedAt,
+    String? coverImageBase64,
   });
 }
 
@@ -82,6 +84,7 @@ class _$GeneratedRouteCopyWithImpl<$Res, $Val extends GeneratedRoute>
     Object? medal = freezed,
     Object? createdAt = freezed,
     Object? completedAt = freezed,
+    Object? coverImageBase64 = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -117,6 +120,10 @@ class _$GeneratedRouteCopyWithImpl<$Res, $Val extends GeneratedRoute>
                 ? _value.completedAt
                 : completedAt // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            coverImageBase64: freezed == coverImageBase64
+                ? _value.coverImageBase64
+                : coverImageBase64 // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -141,6 +148,7 @@ abstract class _$$GeneratedRouteImplCopyWith<$Res>
     MedalType? medal,
     DateTime? createdAt,
     DateTime? completedAt,
+    String? coverImageBase64,
   });
 }
 
@@ -166,6 +174,7 @@ class __$$GeneratedRouteImplCopyWithImpl<$Res>
     Object? medal = freezed,
     Object? createdAt = freezed,
     Object? completedAt = freezed,
+    Object? coverImageBase64 = freezed,
   }) {
     return _then(
       _$GeneratedRouteImpl(
@@ -201,6 +210,10 @@ class __$$GeneratedRouteImplCopyWithImpl<$Res>
             ? _value.completedAt
             : completedAt // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        coverImageBase64: freezed == coverImageBase64
+            ? _value.coverImageBase64
+            : coverImageBase64 // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -218,6 +231,7 @@ class _$GeneratedRouteImpl implements _GeneratedRoute {
     this.medal,
     this.createdAt,
     this.completedAt,
+    this.coverImageBase64,
   }) : _stops = stops;
 
   factory _$GeneratedRouteImpl.fromJson(Map<String, dynamic> json) =>
@@ -246,10 +260,12 @@ class _$GeneratedRouteImpl implements _GeneratedRoute {
   final DateTime? createdAt;
   @override
   final DateTime? completedAt;
+  @override
+  final String? coverImageBase64;
 
   @override
   String toString() {
-    return 'GeneratedRoute(id: $id, title: $title, narration: $narration, stops: $stops, completed: $completed, medal: $medal, createdAt: $createdAt, completedAt: $completedAt)';
+    return 'GeneratedRoute(id: $id, title: $title, narration: $narration, stops: $stops, completed: $completed, medal: $medal, createdAt: $createdAt, completedAt: $completedAt, coverImageBase64: $coverImageBase64)';
   }
 
   @override
@@ -268,7 +284,9 @@ class _$GeneratedRouteImpl implements _GeneratedRoute {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.completedAt, completedAt) ||
-                other.completedAt == completedAt));
+                other.completedAt == completedAt) &&
+            (identical(other.coverImageBase64, coverImageBase64) ||
+                other.coverImageBase64 == coverImageBase64));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -283,6 +301,7 @@ class _$GeneratedRouteImpl implements _GeneratedRoute {
     medal,
     createdAt,
     completedAt,
+    coverImageBase64,
   );
 
   /// Create a copy of GeneratedRoute
@@ -312,6 +331,7 @@ abstract class _GeneratedRoute implements GeneratedRoute {
     final MedalType? medal,
     final DateTime? createdAt,
     final DateTime? completedAt,
+    final String? coverImageBase64,
   }) = _$GeneratedRouteImpl;
 
   factory _GeneratedRoute.fromJson(Map<String, dynamic> json) =
@@ -333,6 +353,8 @@ abstract class _GeneratedRoute implements GeneratedRoute {
   DateTime? get createdAt;
   @override
   DateTime? get completedAt;
+  @override
+  String? get coverImageBase64;
 
   /// Create a copy of GeneratedRoute
   /// with the given fields replaced by the non-null parameter values.

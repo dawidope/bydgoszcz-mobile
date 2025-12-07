@@ -33,10 +33,18 @@ _$GeneratedRouteImpl _$$GeneratedRouteImplFromJson(Map json) => $checkedCreate(
         'completed_at',
         (v) => v == null ? null : DateTime.parse(v as String),
       ),
+      coverImageBase64: $checkedConvert(
+        'cover_image_base64',
+        (v) => v as String?,
+      ),
     );
     return val;
   },
-  fieldKeyMap: const {'createdAt': 'created_at', 'completedAt': 'completed_at'},
+  fieldKeyMap: const {
+    'createdAt': 'created_at',
+    'completedAt': 'completed_at',
+    'coverImageBase64': 'cover_image_base64',
+  },
 );
 
 Map<String, dynamic> _$$GeneratedRouteImplToJson(
@@ -50,6 +58,7 @@ Map<String, dynamic> _$$GeneratedRouteImplToJson(
   'medal': _$MedalTypeEnumMap[instance.medal],
   'created_at': instance.createdAt?.toIso8601String(),
   'completed_at': instance.completedAt?.toIso8601String(),
+  'cover_image_base64': instance.coverImageBase64,
 };
 
 const _$MedalTypeEnumMap = {

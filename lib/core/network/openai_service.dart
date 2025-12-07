@@ -537,8 +537,13 @@ Pamiętaj: to ma być spójna bajka gdzie $userName jest głównym bohaterem!'''
                 ],
               },
             },
+            'txt2imgPrompt': {
+              'type': 'string',
+              'description':
+                  'Prompt in English for generating a fairy tale illustration. Describe a magical, colorful scene with the main hero ($userName, $userAge years old) setting off on an adventure through Bydgoszcz. Style: Pixar 3D animation style, vibrant colors, friendly atmosphere, detailed lighting, cinematic composition. Max 200 words.',
+            },
           },
-          'required': ['title', 'introduction', 'stops'],
+          'required': ['title', 'introduction', 'stops', 'txt2imgPrompt'],
         },
       };
 
@@ -571,6 +576,41 @@ Pamiętaj: to ma być spójna bajka gdzie $userName jest głównym bohaterem!'''
       throw Exception('OpenAI API error: ${e.message}');
     } catch (e) {
       throw Exception('Error generating adventure route: $e');
+    }
+  }
+
+  /// Generates an image using gpt-image-1-mini model
+  Future<String> generateImage({required String prompt}) async {
+    try {
+      final requestBody = {
+        'model': 'gpt-image-1-mini',
+        'prompt': prompt,
+        'quality': 'medium',
+        'size': '1024x1024',
+        'n': 1,
+      };
+
+      final response = await _dio.post(
+        '/images/generations',
+        data: requestBody,
+      );
+
+      final data = response.data['data'] as List<dynamic>;
+      if (data.isNotEmpty) {
+        // API returns base64 encoded image
+        final imageData = data[0];
+        if (imageData['b64_json'] != null) {
+          return imageData['b64_json'] as String;
+        } else if (imageData['url'] != null) {
+          return imageData['url'] as String;
+        }
+      }
+
+      throw Exception('No image data in response');
+    } on DioException catch (e) {
+      throw Exception('OpenAI Image API error: ${e.message}');
+    } catch (e) {
+      throw Exception('Error generating image: $e');
     }
   }
 }

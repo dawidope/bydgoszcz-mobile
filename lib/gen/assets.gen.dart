@@ -126,6 +126,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/logo2.png
+  AssetGenImage get logo2 => const AssetGenImage('assets/images/logo2.png');
+
   /// File path: assets/images/luczniczka.png
   AssetGenImage get luczniczka =>
       const AssetGenImage('assets/images/luczniczka.png');
@@ -173,6 +176,7 @@ class $AssetsImagesGen {
     kanalBydgoski,
     katedraBydgoska,
     logo,
+    logo2,
     luczniczka,
     mistrzTwardowski,
     mlynyRothera,

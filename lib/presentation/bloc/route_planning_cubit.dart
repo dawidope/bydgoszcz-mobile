@@ -77,10 +77,29 @@ class RoutePlanningCubit extends Cubit<RoutePlanningState> {
         userInterests: userProfile.interests,
       );
 
+      // Generate cover image from txt2imgPrompt
+      String? coverImageBase64;
+      final txt2imgPrompt = result['txt2imgPrompt'] as String?;
+      if (txt2imgPrompt != null && txt2imgPrompt.isNotEmpty) {
+        emit(RoutePlanningGenerating('Generuję ilustrację do bajki...'));
+        try {
+          coverImageBase64 = await _openAiService.generateImage(
+            prompt: txt2imgPrompt,
+          );
+        } catch (e) {
+          // Image generation failed, but we can continue without it
+          coverImageBase64 = null;
+        }
+      }
+
       emit(RoutePlanningGenerating('Finalizuję trasę...'));
 
       // Parse response and create GeneratedRoute
-      final route = _parseRouteFromResponse(result, selectedMonuments);
+      final route = _parseRouteFromResponse(
+        result,
+        selectedMonuments,
+        coverImageBase64: coverImageBase64,
+      );
 
       // Save route to storage
       _routeStorage.saveRoute(route);
@@ -94,8 +113,9 @@ class RoutePlanningCubit extends Cubit<RoutePlanningState> {
 
   GeneratedRoute _parseRouteFromResponse(
     Map<String, dynamic> response,
-    List<dynamic> selectedMonuments,
-  ) {
+    List<dynamic> selectedMonuments, {
+    String? coverImageBase64,
+  }) {
     final stopsData = response['stops'] as List<dynamic>;
     final stops = <RouteStop>[];
 
@@ -131,6 +151,7 @@ class RoutePlanningCubit extends Cubit<RoutePlanningState> {
       narration: response['introduction'] as String,
       stops: stops,
       createdAt: DateTime.now(),
+      coverImageBase64: coverImageBase64,
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bydgoszcz/core/theme/app_colors.dart';
 import 'package:bydgoszcz/core/theme/app_shadows.dart';
 import 'package:bydgoszcz/core/theme/app_typography.dart';
@@ -153,21 +155,51 @@ class _AdventureCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Cover image (if available)
+            if (route.coverImageBase64 != null &&
+                route.coverImageBase64!.isNotEmpty)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+                child: Image.memory(
+                  base64Decode(route.coverImageBase64!),
+                  width: double.infinity,
+                  height: 140,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 140,
+                      color: AppColors.surfaceVariant,
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_not_supported_rounded,
+                          color: AppColors.textDisabled,
+                          size: 32,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             // Header with medal
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.bydgoszczBlue.withOpacity(0.1),
-                    AppColors.primary.withOpacity(0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
+                gradient: route.coverImageBase64 == null
+                    ? LinearGradient(
+                        colors: [
+                          AppColors.bydgoszczBlue.withOpacity(0.1),
+                          AppColors.primary.withOpacity(0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                borderRadius: route.coverImageBase64 == null
+                    ? const BorderRadius.vertical(top: Radius.circular(20))
+                    : null,
               ),
               child: Row(
                 children: [

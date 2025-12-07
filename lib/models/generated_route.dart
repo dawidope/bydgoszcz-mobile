@@ -17,6 +17,7 @@ class GeneratedRoute with _$GeneratedRoute {
     MedalType? medal,
     DateTime? createdAt,
     DateTime? completedAt,
+    String? coverImageBase64,
   }) = _GeneratedRoute;
 
   factory GeneratedRoute.fromJson(Map<String, dynamic> json) =>
