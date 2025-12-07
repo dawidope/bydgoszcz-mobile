@@ -24,11 +24,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   // Mapowanie zainteresowań na ikony i kolory
   static const Map<String, IconData> _interestIcons = {
-    'Smoki i fantastyka': Icons.auto_awesome,
-    'Historia i zamki': Icons.castle,
-    'Muzyka i sztuka': Icons.palette,
-    'Przyroda i parki': Icons.park,
-    'Wojsko i technika': Icons.precision_manufacturing,
+    'Smoki': Icons.auto_awesome,
+    'Zamki': Icons.castle,
+    'Muzyka': Icons.palette,
+    'Zwierzęta': Icons.pets,
+    'Sport': Icons.sports_soccer,
+    'Nauka': Icons.science,
+    'Kosmos': Icons.rocket_launch,
+    'Jedzenie': Icons.restaurant,
+    'Komiksy': Icons.bolt,
+    'Pojazdy': Icons.directions_car,
   };
 
   static const List<Color> _interestColors = [
@@ -36,7 +41,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
     AppColors.bydgoszczYellow,
     AppColors.bydgoszczBlue,
     AppColors.success,
+    AppColors.accent,
+    AppColors.primary,
     AppColors.bydgoszczRed,
+    AppColors.bydgoszczYellow,
+    AppColors.bydgoszczBlue,
+    AppColors.success,
   ];
 
   @override

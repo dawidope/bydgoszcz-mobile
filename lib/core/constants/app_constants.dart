@@ -9,11 +9,15 @@ class AppConstants {
   static const int minRouteStops = 2;
 
   static const List<String> availableInterests = [
+    'Smoki',
     'Zamki',
     'Muzyka',
-    'Historia',
-    'Sztuka',
-    'Przyroda',
-    'Wojsko',
+    'Zwierzęta',
+    'Sport',
+    'Nauka',
+    'Kosmos',
+    'Jedzenie',
+    'Komiksy',
+    'Pojazdy',
   ];
 }
