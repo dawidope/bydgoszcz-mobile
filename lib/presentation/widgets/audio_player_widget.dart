@@ -21,6 +21,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   late final AudioPlayer _audioPlayer;
   bool _isPlaying = false;
   bool _isLoading = false;
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -28,19 +29,16 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     _audioPlayer = AudioPlayer();
     _audioPlayer.playerStateStream.listen((state) {
       if (mounted) {
-        try {
-          setState(() {
-            _isPlaying = state.playing;
-          });
-          // Auto-reset when finished
-          if (state.processingState == ProcessingState.completed) {
-            _audioPlayer.seek(Duration.zero);
-            _audioPlayer.pause();
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Błąd odtwarzania audio: $e')));
+        setState(() {
+          _isPlaying = state.playing;
+          _isLoading =
+              state.processingState == ProcessingState.loading ||
+              state.processingState == ProcessingState.buffering;
+        });
+        // Auto-reset when finished
+        if (state.processingState == ProcessingState.completed) {
+          _audioPlayer.seek(Duration.zero);
+          _audioPlayer.pause();
         }
       }
     });
@@ -54,26 +52,22 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   Future<void> _togglePlayPause() async {
     try {
-      setState(() => _isLoading = true);
-
       if (_isPlaying) {
         await _audioPlayer.pause();
       } else {
-        // Load audio if not loaded yet
-        if (_audioPlayer.processingState == ProcessingState.idle) {
+        if (!_isInitialized) {
+          setState(() => _isLoading = true);
           await _audioPlayer.setAsset(widget.audioAssetPath);
+          _isInitialized = true;
         }
         await _audioPlayer.play();
       }
     } catch (e) {
       if (mounted) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Błąd odtwarzania audio: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
       }
     }
   }
