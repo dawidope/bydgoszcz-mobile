@@ -50,7 +50,9 @@ Aplikacja jest przeznaczona dla wszystkich, ale **szczególnie dla rodziców z d
 
 ### 🎥 Demo Video
 
-https://github.com/user-attachments/assets/video.mov
+<video src="https://raw.githubusercontent.com/dawidope/bydgoszcz-mobile/refs/heads/main/video/video.mov" controls width="100%" style="max-width: 600px;">
+  Twoja przeglądarka nie obsługuje odtwarzacza video.
+</video>
 
 *Alternatywnie: [YouTube Shorts](https://www.youtube.com/shorts/mKvLFy54uCU) | [Pobierz video.mov](video/video.mov)*
 
@@ -124,7 +126,7 @@ Z racji ograniczonego czasu hackathonu (24h), nie mieliśmy możliwości łatweg
 ## 🛠️ Technologie
 
 ### Główne technologie
-- **Flutter 3.10+** - framework do budowy aplikacji mobilnych
+- **Flutter 3.38+** - framework do budowy aplikacji mobilnych
 - **Dart 3.10+** - język programowania
 
 ### AI & Generowanie treści
