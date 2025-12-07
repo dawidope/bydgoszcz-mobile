@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bydgoszcz/core/network/openai_service.dart';
@@ -35,14 +34,10 @@ class _VerifyPhotoPageState extends State<VerifyPhotoPage> {
   bool _isVerifying = false;
   String? _errorMessage;
 
-  Future<void> _takePhoto() async {
+  Future<void> _pickImage(ImageSource source) async {
     try {
-      var imagesource = ImageSource.camera;
-      if (Platform.isWindows) {
-        imagesource = ImageSource.gallery;
-      }
       final XFile? photo = await _picker.pickImage(
-        source: imagesource,
+        source: source,
         imageQuality: 70,
         maxWidth: 1024,
       );
@@ -214,11 +209,22 @@ class _VerifyPhotoPageState extends State<VerifyPhotoPage> {
 
               // Buttons
               if (_imageBytes == null)
-                _buildActionButton(
-                  icon: Icons.camera_alt_rounded,
-                  label: 'Zrób zdjęcie',
-                  color: AppColors.bydgoszczBlue,
-                  onTap: _takePhoto,
+                Column(
+                  children: [
+                    _buildActionButton(
+                      icon: Icons.camera_alt_rounded,
+                      label: 'Zrób zdjęcie',
+                      color: AppColors.bydgoszczBlue,
+                      onTap: () => _pickImage(ImageSource.camera),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildActionButton(
+                      icon: Icons.photo_library_rounded,
+                      label: 'Wybierz z galerii',
+                      color: AppColors.bydgoszczYellow,
+                      onTap: () => _pickImage(ImageSource.gallery),
+                    ),
+                  ],
                 )
               else if (_isVerifying)
                 _buildLoadingButton()
@@ -233,7 +239,7 @@ class _VerifyPhotoPageState extends State<VerifyPhotoPage> {
                     ),
                     const SizedBox(height: 12),
                     TextButton(
-                      onPressed: _takePhoto,
+                      onPressed: () => _pickImage(ImageSource.camera),
                       child: Text(
                         'Zrób nowe zdjęcie',
                         style: AppTypography.bodyMedium.copyWith(
